@@ -16,9 +16,9 @@ export const styles = StyleSheet.create({
         gap: 12,
     },
     title: {
-        ...theme.fonts.h2Style,
-        color: theme.colors.textPrimary,
-    },
+        ...theme.fonts.boldStyle,
+        color: theme.colors.white,
+      },
     image: {
         height: 200,
         borderRadius: 16,
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 12,
         gap: 10,
-        marginBottom: 20,
+        elevation: 1
     },
     emoji: {
         fontSize: 20,

@@ -1,7 +1,7 @@
 {
-  "name": "excusemeai",
-  "displayName": "excusemeai",
+  "name": "captioncraft",
+  "displayName": "captioncraft",
   "react-native-google-mobile-ads": {
-    "android_app_id": "ca-app-pub-8690504943489361~2485643638"
+    "android_app_id": "ca-app-pub-8690504943489361~4266425322"
   }
 }

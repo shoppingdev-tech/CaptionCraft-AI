@@ -1,4 +1,4 @@
-package com.welcome.emojitranslate
+package com.schneider.captioncraft
 
 import android.os.Bundle
 import com.facebook.react.ReactActivity
@@ -9,7 +9,7 @@ import com.zoontek.rnbootsplash.RNBootSplash // <-- add this
 
 class MainActivity : ReactActivity() {
 
-    override fun getMainComponentName(): String = "excusemeai"
+    override fun getMainComponentName(): String = "captioncraft"
 
     override fun createReactActivityDelegate(): ReactActivityDelegate =
         DefaultReactActivityDelegate(this, mainComponentName, fabricEnabled)

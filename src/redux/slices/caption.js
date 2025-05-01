@@ -20,8 +20,6 @@ const captionSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(generateImageCaptions.pending, (state) => {
-                console.log('LOADING START');
-
                 state.loading = true;
                 state.error = null;
             })
@@ -29,18 +27,13 @@ const captionSlice = createSlice({
                 try {
 
                     const responseText = action.payload;
-                    console.log('responseText START', responseText);
-
                     const start = responseText.indexOf('[');
                     const end = responseText.lastIndexOf(']') + 1;
                     if (start === -1 || end === -1) {
                         state.captions = [];
                     }
                     const jsonString = responseText.slice(start, end);
-                    console.log('jsonString START', jsonString);
-
                     const dataInArray = JSON.parse(jsonString)
-                    console.log('dataInArray START', dataInArray);
 
                     state.captions = dataInArray;
                 } catch {

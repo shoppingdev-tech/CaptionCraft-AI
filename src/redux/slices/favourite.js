@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { showToast } from '../../components/utils';
 
 const initialState = {
     favouriteCaption: [],
@@ -16,6 +17,7 @@ const favouriteCaptions = createSlice({
         },
         removeFavouriteCaption(state, action) {
             state.favouriteCaption = state.favouriteCaption.filter(c => c.id !== action.payload);
+            showToast('success','Removed!', 'Caption removed from favorites!');
         },
         clearCaptions(state) {
             state.favouriteCaption = [];

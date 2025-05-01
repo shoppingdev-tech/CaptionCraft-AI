@@ -14,6 +14,11 @@ export const styles = StyleSheet.create({
       ...theme.fonts.style,
       color: theme.colors.white,
     },
+    italictext: {
+      ...theme.fonts.italicStyle,
+      color: theme.colors.primary,
+      textAlign: 'center'
+    },
     uploadContainer: {
       backgroundColor: theme.colors.white,
       padding: 20,
@@ -41,10 +46,10 @@ export const styles = StyleSheet.create({
       color: theme.colors.textPrimary,
     },
     chooseStyleLabel: {
-      ...theme.fonts.boldStyle,
+      ...theme.fonts.semiBoldStyle,
       color: theme.colors.textPrimary,
       fontSize: 18,
-      marginBottom: 10,
+      marginBottom: 20,
     },
     pickerContainer: {
       backgroundColor: theme.colors.white,
@@ -87,7 +92,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
     },
     buttonText: {
-      ...theme.fonts.style,
+      ...theme.fonts.semiBoldStyle,
       color: theme.colors.white,
     },
     skipText: {

@@ -1,0 +1,181 @@
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+} from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import { theme } from '../theme';
+import { styles as homeStyle } from '../styles/home';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/thunk/auth';
+import { useDisableBackHandler } from '../backHandlerUtils';
+import LogoutModal from './logout';
+
+const SettingsScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  useDisableBackHandler();
+  const { user } = useSelector((state) => state.auth);
+  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  console.log('visible', isLogoutModalVisible);
+
+  return (
+    <View style={homeStyle.container}>
+      <StatusBar translucent backgroundColor={'transparent'} />
+      <View style={{ backgroundColor: '#F3F4F6' }}>
+        <LinearGradient
+          colors={['#6366F1', '#D946EF']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 10
+            // paddingVertical: 20,
+          }}
+        >
+          <TouchableOpacity style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }} onPress={() => navigation.goBack()}>
+            <View>
+              <Icon name="arrow-back-sharp" size={24} color={theme.colors.white} />
+            </View>
+
+            <Text style={{
+              color: theme.colors.white,
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              marginLeft: 20
+            }}>
+              Settings
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+      <ScrollView style={styles.container}>
+        {/* Token Card */}
+        <View style={styles.tokenCard}>
+          <Text style={styles.tokenTitle}>Available Tokens</Text>
+          <Text style={styles.tokenValue}>{user?.token ?? 0}</Text>
+        </View>
+
+        {/* Options */}
+        <View style={styles.optionsWrapper}>
+          {/* <SettingItem
+            title="Change Password"
+            icon="lock-open-outline"
+            onPress={() => navigation.navigate('ChangePassword')}
+          /> */}
+          {/* <SettingItem
+            title="Buy Tokens"
+            icon="battery-half"
+            onPress={() => navigation.navigate('Packs')}
+          /> */}
+          <SettingItem
+            title="Logout"
+            icon="trail-sign-outline"
+            onPress={() =>setIsLogoutModalVisible(true)}
+          />
+        </View>
+
+        {/* Remove Ads Button */}
+        {/* <Text style={styles.sectionLabel}>Want ad-free experience?</Text> */}
+        {/* <LinearGradient
+          colors={['#6366F1', '#D946EF']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.removeAdsButton}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate('RemoveAds')} style={styles.removeAdsTouchable}>
+            <Text style={styles.removeAdsText}>Remove Ads</Text>
+          </TouchableOpacity>
+        </LinearGradient> */}
+      </ScrollView>
+      <LogoutModal visible={isLogoutModalVisible} onConfirm={() => dispatch(logout())} onClose={() => setIsLogoutModalVisible(false)} />
+    </View>
+  );
+};
+
+const SettingItem = ({ title, icon, onPress }) => (
+  <TouchableOpacity style={styles.item} onPress={onPress}>
+    <Icon name={icon} size={24} color={theme.colors.primary} />
+    <Text style={styles.itemText}>{title}</Text>
+    <Icon name="chevron-forward" size={22} color={theme.colors.gray} style={styles.arrow} />
+  </TouchableOpacity>
+);
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: 20,
+  },
+  tokenCard: {
+    backgroundColor: theme.colors.primary,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 30,
+  },
+  tokenTitle: {
+    ...theme.fonts.subtitle2Style,
+    color: theme.colors.white,
+    marginBottom: 4,
+  },
+  tokenValue: {
+    ...theme.fonts.h1Style,
+    color: theme.colors.white,
+  },
+  sectionLabel: {
+    ...theme.fonts.subtitle1Style,
+    marginBottom: 8,
+    color: theme.colors.textSecondary,
+  },
+  optionsWrapper: {
+    backgroundColor: theme.colors.white,
+    borderRadius: 16,
+    paddingVertical: 8,
+    marginBottom: 30,
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 1 },
+  },
+  item: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  itemText: {
+    flex: 1,
+    marginLeft: 12,
+    ...theme.fonts.subtitle2Style,
+    color: theme.colors.textPrimary,
+  },
+  arrow: {
+    marginLeft: 8,
+  },
+  removeAdsButton: {
+    borderRadius: 16,
+  },
+  removeAdsTouchable: {
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  removeAdsText: {
+    color: theme.colors.white,
+    ...theme.fonts.boldStyle,
+  },
+});
+
+
+export default SettingsScreen;
+
+

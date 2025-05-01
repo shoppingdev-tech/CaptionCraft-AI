@@ -9,8 +9,11 @@ import { styles } from '../styles/captionDetails';
 import { theme } from '../theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { addFavouriteCaption, removeFavouriteCaption } from '../redux/slices/favourite';
+import { useDisableBackHandler } from '../backHandlerUtils';
+import { copyToClipboard, handleShareLink, showToast } from './utils';
 
-const CaptionDetailsScreen = ({ route }) => {
+const CaptionDetailsScreen = ({ route, navigation }) => {
+  useDisableBackHandler();
   const { item, image } = route.params; // Make sure to pass this from the previous screen
   const dispatch = useDispatch();
   const { favouriteCaption } = useSelector((state) => state.favouriteCaptions);
@@ -21,6 +24,7 @@ const CaptionDetailsScreen = ({ route }) => {
       image,
     }
     dispatch(addFavouriteCaption(payload));
+    showToast('success', 'Added!', 'Caption added to favorites! 💖');
   }
   const isFavorite = favouriteCaption && favouriteCaption?.find(fav => fav?.id == item?.id);
   return (
@@ -32,11 +36,16 @@ const CaptionDetailsScreen = ({ route }) => {
         colors={['#6366F1', '#D946EF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        style={[styles.header, styles.favourite]}
+        style={[styles.header,]}
       >
-        <Text style={styles.headerTitle}>Caption Details</Text>
-        <TouchableOpacity onPress={() => isFavorite ? dispatch(removeFavouriteCaption(item.id)) : favouriteItem()} style={styles.favouriteIcon}>
-          <AntDesign name="heart" size={24} color={isFavorite ? theme.colors.primary : theme.colors.gray} />
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.favourite}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Ionicons name="arrow-back-sharp" size={24} color={theme.colors.white} />
+            <Text style={[styles.title, { marginLeft: 20 }]}>Caption Details</Text>
+          </View>
+          <TouchableOpacity onPress={() => isFavorite ? dispatch(removeFavouriteCaption(item.id)) : favouriteItem()} style={styles.favouriteIcon}>
+            <AntDesign name="heart" size={24} color={isFavorite ? theme.colors.primary : theme.colors.gray} />
+          </TouchableOpacity>
         </TouchableOpacity>
       </LinearGradient>
       <ScrollView contentContainerStyle={styles.scrollView}>
@@ -46,10 +55,10 @@ const CaptionDetailsScreen = ({ route }) => {
           resizeMode={FastImage.resizeMode.cover}
         />
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, justifyContent: 'flex-end', paddingHorizontal: 15, paddingTop: 15 }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => copyToClipboard(item.caption)}>
             <Ionicons name="copy-outline" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleShareLink(item.caption)}>
             <Ionicons name="share-social-outline" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>
@@ -58,10 +67,10 @@ const CaptionDetailsScreen = ({ route }) => {
         </View>
 
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, justifyContent: 'flex-end', padding: 15 }}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => copyToClipboard(item.hashtags.join(' '))}>
             <Ionicons name="copy-outline" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleShareLink(item.hashtags.join(' '))}>
             <Ionicons name="share-social-outline" size={24} color={theme.colors.primary} />
           </TouchableOpacity>
         </View>

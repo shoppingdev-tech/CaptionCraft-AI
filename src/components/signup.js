@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { theme } from '../theme';
+import { useDispatch, useSelector } from 'react-redux';
+import { signupUser } from '../redux/thunk/auth';
 
 export default function SignupScreen({ navigation }) {
+    const dispatch = useDispatch();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [usernameValid, setUsernameValid] = useState(true);
-    const [emailValid, setEmailValid] = useState(true);
-    const [passwordValid, setPasswordValid] = useState(true);
+    const [usernameValid, setUsernameValid] = useState(false);
+    const [emailValid, setEmailValid] = useState(false);
+    const [passwordValid, setPasswordValid] = useState(false);
     const [touched, setTouched] = useState({ username: false, email: false, password: false });
     const [showPassword, setShowPassword] = useState(false);
-
+    const { status } = useSelector((state) => state.auth);
     const validateUsername = () => {
         setUsernameValid(username.length > 0);
     };
@@ -29,17 +32,41 @@ export default function SignupScreen({ navigation }) {
         setPasswordValid(password.length >= 6);
     };
 
-    const handleSignup = () => {
+    const disposableDomains = [
+        'yopmail.com',
+        'mailinator.com',
+        '10minutemail.com',
+        'tempmail.com',
+        'guerrillamail.com',
+        'trashmail.com',
+        'getnada.com',
+        // Add more known ones here
+      ];
+
+      const isDisposableEmail = (email) => {
+        const domain = email.split('@')[1]?.toLowerCase();
+        return disposableDomains.includes(domain);
+      };
+      
+
+    const handleSignup = async () => {
         validateUsername();
         validateEmail();
         validatePassword();
+        if (isDisposableEmail(email)) {
+            setEmailValid(false);
+            return
+          }
         setTouched({ username: true, email: true, password: true });
 
         if (!usernameValid || !emailValid || !passwordValid) {
             return;
         }
-
-        // Perform signup logic here
+        await dispatch(signupUser({
+            email,
+            password,
+            username,
+        }));
     };
 
     return (
@@ -51,95 +78,100 @@ export default function SignupScreen({ navigation }) {
         >
             <StatusBar translucent backgroundColor={'transparent'} />
             <KeyboardAwareScrollView  contentContainerStyle={styles.container}>
-                    <Text style={styles.header}>Create Account</Text>
-                    <Text style={styles.subHeader}>Sign up to get started</Text>
+                <Text style={styles.header}>Create Account</Text>
+                <Text style={styles.subHeader}>Sign up to get started</Text>
 
+                <TextInput
+                    style={[
+                        styles.input,
+                        {
+                            borderColor:
+                                !usernameValid && touched.username ? theme.colors.redError : theme.colors.white,
+                        },
+                    ]}
+                    placeholder="Username"
+                    placeholderTextColor={theme.colors.placeHolder}
+                    value={username}
+                    onChangeText={setUsername}
+                    onBlur={() => {
+                        setTouched((prev) => ({ ...prev, username: true }));
+                        validateUsername();
+                    }}
+                />
+                {!usernameValid && touched.username && (
+                    <Text style={styles.errorText}>Username is required</Text>
+                )}
+
+                <TextInput
+                    style={[
+                        styles.input,
+                        {
+                            borderColor:
+                                !emailValid && touched.email ? theme.colors.redError : theme.colors.white,
+                        },
+                    ]}
+                    placeholder="Email"
+                    placeholderTextColor={theme.colors.placeHolder}
+                    keyboardType="email-address"
+                    value={email}
+                    autoCapitalize="none"
+                    onChangeText={setEmail}
+                    onBlur={() => {
+                        setTouched((prev) => ({ ...prev, email: true }));
+                        validateEmail();
+                    }}
+                />
+                {!emailValid && touched.email && (
+                    <Text style={styles.errorText}>Please enter a valid email</Text>
+                )}
+
+                <View style={styles.passwordContainer}>
                     <TextInput
                         style={[
                             styles.input,
                             {
                                 borderColor:
-                                    !usernameValid && touched.username ? theme.colors.redError : theme.colors.white,
+                                    !passwordValid && touched.password ? theme.colors.redError : theme.colors.white,
                             },
                         ]}
-                        placeholder="Username"
-                        placeholderTextColor={theme.colors.white}
-                        value={username}
-                        onChangeText={setUsername}
+                        placeholder="Password"
+                        placeholderTextColor={theme.colors.placeHolder}
+                        secureTextEntry={!showPassword}
+                        value={password}
+                        onChangeText={setPassword}
+                        autoCapitalize="none"
                         onBlur={() => {
-                            setTouched((prev) => ({ ...prev, username: true }));
-                            validateUsername();
+                            setTouched((prev) => ({ ...prev, password: true }));
+                            validatePassword();
                         }}
                     />
-                    {!usernameValid && touched.username && (
-                        <Text style={styles.errorText}>Username is required</Text>
-                    )}
-
-                    <TextInput
-                        style={[
-                            styles.input,
-                            {
-                                borderColor:
-                                    !emailValid && touched.email ? theme.colors.redError : theme.colors.white,
-                            },
-                        ]}
-                        placeholder="Email"
-                        placeholderTextColor={theme.colors.white}
-                        keyboardType="email-address"
-                        value={email}
-                        onChangeText={setEmail}
-                        onBlur={() => {
-                            setTouched((prev) => ({ ...prev, email: true }));
-                            validateEmail();
-                        }}
-                    />
-                    {!emailValid && touched.email && (
-                        <Text style={styles.errorText}>Please enter a valid email</Text>
-                    )}
-
-                    <View style={styles.passwordContainer}>
-                        <TextInput
-                            style={[
-                                styles.input,
-                                {
-                                    borderColor:
-                                        !passwordValid && touched.password ? theme.colors.redError : theme.colors.white,
-                                },
-                            ]}
-                            placeholder="Password"
-                            placeholderTextColor={theme.colors.white}
-                            secureTextEntry={!showPassword}
-                            value={password}
-                            onChangeText={setPassword}
-                            onBlur={() => {
-                                setTouched((prev) => ({ ...prev, password: true }));
-                                validatePassword();
-                            }}
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+                        <Icon
+                            name={showPassword ? 'eye-slash' : 'eye'}
+                            size={20}
+                            color={theme.colors.white}
+                            style={styles.eyeIcon}
                         />
-                        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                            <Icon
-                                name={showPassword ? 'eye-slash' : 'eye'}
-                                size={20}
-                                color={theme.colors.white}
-                                style={styles.eyeIcon}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                    {!passwordValid && touched.password && (
-                        <Text style={styles.errorText}>Password must be at least 6 characters</Text>
-                    )}
-
-                    <TouchableOpacity onPress={handleSignup} style={styles.button}>
-                        <View style={styles.gradientButton}>
-                            <Text style={styles.buttonText}>Sign Up</Text>
-                        </View>
                     </TouchableOpacity>
-                    <View style={styles.footerTextWrap}>
-                        <Text style={styles.footerText}>Already have an account? </Text>
-                        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                            <Text style={styles.linkText}>Login</Text>
-                        </TouchableOpacity>
+                </View>
+                {!passwordValid && touched.password && (
+                    <Text style={styles.errorText}>Password must be at least 6 characters</Text>
+                )}
+                <TouchableOpacity onPress={handleSignup} style={styles.button}>
+                    <View style={styles.gradientButton}>
+                        {status == 'loading' ? (
+                            <ActivityIndicator size="small" color="#FFFFFF" /> // 👈 Loader here
+                        ) : (
+                            <Text style={styles.buttonText}>Sign Up</Text>
+                        )}
                     </View>
+                </TouchableOpacity>
+                <View style={styles.footerTextWrap}>
+                    <Text style={styles.footerText}>Already have an account? </Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                        <Text style={styles.linkText}>Login</Text>
+                    </TouchableOpacity>
+                </View>
             </KeyboardAwareScrollView>
         </LinearGradient>
     );
@@ -150,6 +182,7 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 24,
         justifyContent: 'center',
+        height: '100%'
     },
     header: {
         ...theme.fonts.h1Style,

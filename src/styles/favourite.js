@@ -11,7 +11,7 @@ export const styles = StyleSheet.create({
       borderRadius: 20,
     },
     title: {
-      ...theme.fonts.style,
+      ...theme.fonts.boldStyle,
       color: theme.colors.white,
     },
     header: {
@@ -28,11 +28,11 @@ export const styles = StyleSheet.create({
         backgroundColor: theme.colors.lightGray,
         borderRadius: 16,
         padding: 12,
-        // gap: 10,
-        marginBottom: 20,
+        marginBottom: 10,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        elevation: 2
       },
       cardContent: {
         flexDirection: 'row',
@@ -63,5 +63,16 @@ export const styles = StyleSheet.create({
         ...theme.fonts.body2Style,
         color: theme.colors.primary,
         marginTop: 4,
+    },
+    noFavorite: {
+      ...theme.fonts.h3Style,
+      color: theme.colors.primary,
+    },
+    noFavoriteDesc: {
+      ...theme.fonts.style,
+      color: theme.colors.primary,
+      textAlign: 'center',
+      marginTop: 5,
+      marginHorizontal: 40
     },
   });

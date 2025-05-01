@@ -1,4 +1,4 @@
-package com.welcome.emojitranslate
+package com.schneider.captioncraft
 
 import android.app.Application
 import com.facebook.react.PackageList

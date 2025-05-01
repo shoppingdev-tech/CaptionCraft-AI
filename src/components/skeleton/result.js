@@ -1,36 +1,50 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Skeleton from 'react-native-skeleton-loading';
+import { View, Animated, StyleSheet } from 'react-native';
 
-const CaptionSkeleton = () => {
+const RectangleSkeleton = () => {
+  const animatedValue = React.useRef(new Animated.Value(0)).current;
+
+  React.useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(animatedValue, {
+          toValue: 1,
+          duration: 800,
+          useNativeDriver: false,
+        }),
+        Animated.timing(animatedValue, {
+          toValue: 0,
+          duration: 800,
+          useNativeDriver: false,
+        }),
+      ])
+    ).start();
+  }, []);
+
+  const backgroundColor = animatedValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['#e0e0e0', '#f5f5f5'], // Light gray shimmer
+  });
+
   return (
-    <View style={styles.container}>
-      <Skeleton>
-        <View style={styles.image} />
-        <View style={styles.captionBox} />
-        <View style={styles.captionBox} />
-        <View style={styles.captionBox} />
-      </Skeleton>
+    <View style={{}}>
+    <Animated.View style={[styles.rectangle, { backgroundColor }]} />
+    <Animated.View style={[styles.rectangle, { backgroundColor }]} />
+    <Animated.View style={[styles.rectangle, { backgroundColor }]} />
+    <Animated.View style={[styles.rectangle, { backgroundColor }]} />
+    <Animated.View style={[styles.rectangle, { backgroundColor }]} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    borderRadius: 16,
-    marginBottom: 16,
-  },
-  captionBox: {
-    height: 60,
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: '#e0e0e0',
+  rectangle: {
+    width: '90%',
+    marginHorizontal: 20,
+    height: 100,
+    borderRadius: 8,
+    marginBottom: 10,
   },
 });
 
-export default CaptionSkeleton;
+export default RectangleSkeleton;

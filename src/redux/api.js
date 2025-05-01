@@ -7,7 +7,7 @@ export const generateImageCaptions = createAsyncThunk(
   'captions/generateImageCaptions',
   async ({ imageBase64, description, style }, { rejectWithValue }) => {
     const prompt = `
-    Generate 5 professionally written social media captions based on this image, description, and style.
+    Generate 5 professionally written social media captions based on this Description, Style, and image.
     
     Description: "\${description}"
     Style: "\${style}"
@@ -15,7 +15,8 @@ export const generateImageCaptions = createAsyncThunk(
     Instructions:
     - Each caption must start with an emoji followed by two spaces.
     - Do NOT include any hashtags inside the "caption" field.
-    - Instead, provide all 10 trending and relevant hashtags separately in the "hashtags" array.
+    - Please keep focus on descriptions and style based on that provide content
+    - Instead, provide all 20 trending and relevant hashtags separately in the "hashtags" array.
     - Ensure the hashtags array contains only plain hashtags (e.g., "#EarthDay"), not inside any sentence.
     - Each object in the array must include a unique "id" field using UUID format (e.g., "8f14e45f-ea9e-4a0a-9d92-0b923920b0c8").
     
@@ -56,14 +57,13 @@ export const generateImageCaptions = createAsyncThunk(
           },
         }
       );
-      console.log('response', response);
-
+      console.log('response.data', response.data);
+      
       const text = response.data.candidates[0].content.parts[0].text;
-      console.log('START text', text);
-
       return text;
     } catch (err) {
-      console.error('Error generating captions:', err.message, err.response?.data);
+      console.log('response.err', err);
+
       return rejectWithValue(err.response?.data || err.message);
     }
   }

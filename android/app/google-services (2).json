@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1053554635808",
+    "project_id": "captioncraft-c5de1",
+    "storage_bucket": "captioncraft-c5de1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053554635808:android:5c2066bfa696416c22f845",
+        "android_client_info": {
+          "package_name": "com.schneider.captioncraft"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmqis6PqtUNdOURI94a_mqkF-mqOf84bc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

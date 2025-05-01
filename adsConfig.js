@@ -3,7 +3,7 @@ import { TestIds } from 'react-native-google-mobile-ads';
 
 export const BannerAdUnitId = __DEV__
   ? TestIds.BANNER
-  : 'ca-app-pub-8690504943489361/2293180327'; // <-- Replace with your real Banner Ad ID
+  : 'ca-app-pub-8690504943489361/7411996242'; // <-- Replace with your real Banner Ad ID
 
 export const InterstitialAdUnitId = __DEV__
   ? TestIds.INTERSTITIAL
@@ -11,4 +11,4 @@ export const InterstitialAdUnitId = __DEV__
 
 export const AppOpenAdUnitId = __DEV__
   ? TestIds.APP_OPEN
-  : 'ca-app-pub-8690504943489361/8863124385'; // <-- Replace with your real App Open ID
+  : 'ca-app-pub-8690504943489361/6033968414'; // <-- Replace with your real App Open ID

@@ -1,30 +1,55 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, StatusBar } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import auth from '@react-native-firebase/auth';
 import { theme } from '../theme';
+import { updateUser } from '../redux/slices/authSlice';
+import { useDispatch } from 'react-redux';
+import firestore from '@react-native-firebase/firestore';
+import { logout } from '../redux/thunk/auth';
+import { showToast } from './utils';
 
-export default function OTPScreen({ navigation }) {
-    const [otp, setOtp] = useState('');
-    const [otpValid, setOtpValid] = useState(true);
-    const [touched, setTouched] = useState({ otp: false });
+export default function VerifyEmailScreen({ navigation }) {
+    const user = auth().currentUser;
+    const dispatch = useDispatch();
 
-    const validateOtp = () => {
-        setOtpValid(otp.length === 6); // Assuming OTP is 6 digits long
+
+    useEffect(() => {
+        const id = setInterval(() => {
+            checkVerification();
+        }, 5000);
+
+        return () => clearInterval(id);
+    }, []);
+
+    const checkVerification = async () => {
+        try {
+            await user.reload();
+            const refreshedUser = auth().currentUser;
+            if (refreshedUser.emailVerified) {
+                const uid = refreshedUser.uid;
+                showToast('success', 'Email Verified', 'Your email has been successfully verified.');
+                await firestore().collection('users').doc(uid).update({
+                    isVerified: true,
+                    updatedAt: firestore.FieldValue.serverTimestamp(),
+                });
+                dispatch(updateUser({ isVerified: true }));
+            }
+        } catch (error) {
+            Alert.alert('Error', error.message);
+        } finally {
+        }
     };
 
-    const handleVerifyOtp = () => {
-        validateOtp();
-        setTouched({ otp: true });
-
-        if (!otpValid) {
-            return;
+    const sendVerificationEmail = async () => {
+        try {
+            await user.sendEmailVerification();
+            showToast('success', 'Verification Sent', 'Check your inbox for the verification email.');
+        } catch (error) {
+            showToast('error', 'Verification Failed', 'Could not send verification email.');
+            Alert.alert('Error', error.message);
         }
-
-        // Perform OTP verification logic here
-        alert('OTP Verified!');
-        navigation.navigate('Login');
     };
 
     return (
@@ -34,43 +59,24 @@ export default function OTPScreen({ navigation }) {
             end={{ x: 1, y: 0 }}
             style={{ flex: 1 }}
         >
+            <StatusBar translucent backgroundColor={'transparent'} />
             <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.header}>Enter OTP</Text>
-                <Text style={styles.subHeader}>Please enter the OTP sent to your email</Text>
+                <Text style={styles.header}>Verify Your Email</Text>
+                <Text style={styles.subHeader}>
+                    A verification link has been sent to:
+                </Text>
+                <Text style={styles.emailText}>{user?.email}</Text>
 
-                <TextInput
-                    style={[
-                        styles.input,
-                        {
-                            borderColor:
-                                !otpValid && touched.otp ? '#DC2626' : theme.colors.white,
-                        },
-                    ]}
-                    placeholder="Enter OTP"
-                    placeholderTextColor={theme.colors.white}
-                    keyboardType="numeric"
-                    value={otp}
-                    onChangeText={setOtp}
-                    onBlur={() => {
-                        setTouched((prev) => ({ ...prev, otp: true }));
-                        validateOtp();
-                    }}
-                />
-                {!otpValid && touched.otp && (
-                    <Text style={styles.errorText}>OTP must be 6 digits</Text>
-                )}
-
-                <TouchableOpacity onPress={handleVerifyOtp} style={styles.button}>
+                <TouchableOpacity onPress={sendVerificationEmail} style={styles.button}>
                     <View style={styles.gradientButton}>
-                        <Text style={styles.buttonText}>Verify OTP</Text>
+                        <Text style={styles.buttonText}>
+                            {'Resend Email?'}
+                        </Text>
                     </View>
                 </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-                    <Text style={styles.linkText}>Resend OTP</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                <TouchableOpacity onPress={() => {
+                    dispatch(logout());
+                }}>
                     <Text style={styles.linkText}>Back to Login</Text>
                 </TouchableOpacity>
             </KeyboardAwareScrollView>
@@ -87,26 +93,19 @@ const styles = StyleSheet.create({
     header: {
         ...theme.fonts.h1Style,
         color: theme.colors.white,
-        marginBottom: 8,
+        marginBottom: 12,
+        textAlign: 'center',
     },
     subHeader: {
         ...theme.fonts.subtitle1Style,
         color: theme.colors.white,
-        marginBottom: 24,
+        textAlign: 'center',
     },
-    input: {
-        backgroundColor: 'transparent',
-        borderRadius: 8,
-        padding: 14,
-        marginBottom: 8,
-        borderWidth: 1,
+    emailText: {
         ...theme.fonts.body1Style,
         color: theme.colors.white,
-    },
-    errorText: {
-        color: '#F87171',
-        marginBottom: 8,
-        ...theme.fonts.captionStyle,
+        marginBottom: 24,
+        textAlign: 'center',
     },
     button: {
         borderRadius: 8,
@@ -120,8 +119,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: theme.colors.white,
         ...theme.fonts.boldStyle,
+        color: theme.colors.white,
     },
     linkText: {
         color: theme.colors.white,

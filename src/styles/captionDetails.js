@@ -10,11 +10,13 @@ export const styles = StyleSheet.create({
     padding: 16,
   },
   header: {
-    paddingTop: 50,
-    paddingBottom: 24,
+    paddingTop: 40,
+    paddingBottom: 16,
     paddingHorizontal: 16,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+  },
+  title: {
+    ...theme.fonts.boldStyle,
+    color: theme.colors.white,
   },
   headerTitle: {
     ...theme.fonts.h2Style,

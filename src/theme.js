@@ -9,6 +9,7 @@ export const theme = {
     redError: '#FBBF24',
     black: '#000000',
     gray: 'gray',
+    placeHolder: '#CCCCCC',
   },
   fonts: {
     h1Style: {
@@ -81,6 +82,11 @@ export const theme = {
       fontSize: 10,
       lineHeight: 16,
       letterSpacing: 1.5,
+    },
+    italicStyle: {
+      fontFamily: 'Poppins-Italic',
+      fontSize: 14,
+      lineHeight: 22,
     },
   },
 };
