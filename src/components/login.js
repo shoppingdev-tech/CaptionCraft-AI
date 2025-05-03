@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, StatusBar, 
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { useTranslation } from 'react-i18next';
 
 import { theme } from '../theme';
 import { styles } from '../styles/login';
@@ -10,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginUser } from '../redux/thunk/auth';
 
 export default function LoginScreen({ navigation }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -49,8 +51,8 @@ export default function LoginScreen({ navigation }) {
         >
             <StatusBar translucent backgroundColor={'transparent'} />
             <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.header}>Welcome Back</Text>
-                <Text style={styles.subHeader}>Login to your account</Text>
+                <Text style={styles.header}>{t('welcome_back')}</Text>
+                <Text style={styles.subHeader}>{t('login_to_account')}</Text>
 
                 <TextInput
                     style={[
@@ -60,7 +62,7 @@ export default function LoginScreen({ navigation }) {
                                 !emailValid && touched.email ? theme.colors.redError : theme.colors.white,
                         },
                     ]}
-                    placeholder="Email"
+                    placeholder={t('email')}
                     placeholderTextColor={theme.colors.placeHolder}
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -72,7 +74,7 @@ export default function LoginScreen({ navigation }) {
                     }}
                 />
                 {!emailValid && touched.email && (
-                    <Text style={styles.errorText}>Please enter a valid email</Text>
+                    <Text style={styles.errorText}>{t('valid_email')}</Text>
                 )}
 
                 <View style={styles.passwordContainer}>
@@ -85,7 +87,7 @@ export default function LoginScreen({ navigation }) {
                                     !passwordValid && touched.password ? theme.colors.redError : theme.colors.white,
                             },
                         ]}
-                        placeholder="Password"
+                        placeholder={t('password')}
                         autoCapitalize="none"
                         placeholderTextColor={theme.colors.placeHolder}
                         secureTextEntry={!showPassword}
@@ -108,11 +110,11 @@ export default function LoginScreen({ navigation }) {
                     </TouchableOpacity>
                 </View>
                 {!passwordValid && touched.password && (
-                    <Text style={styles.errorText}>Password must be at least 6 characters</Text>
+                    <Text style={styles.errorText}>{t('password_required')}</Text>
                 )}
 
                 <TouchableOpacity onPress={() => navigation.navigate('Forgot')}>
-                    <Text style={styles.forgotText}>Forgot Password?</Text>
+                    <Text style={styles.forgotText}>{t('forgot_password')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={handleLogin} style={styles.button}>
@@ -120,7 +122,7 @@ export default function LoginScreen({ navigation }) {
                         {status == 'loading' ? (
                             <ActivityIndicator size="small" color="#FFFFFF" /> // 👈 Loader here
                         ) : (
-                            <Text style={styles.buttonText}>Login</Text> // 👈 Normal text
+                            <Text style={styles.buttonText}>{t('login')}</Text> // 👈 Normal text
                         )}
                     </View>
                 </TouchableOpacity>
@@ -131,9 +133,9 @@ export default function LoginScreen({ navigation }) {
                     </TouchableOpacity> */}
 
                 <View style={styles.footerTextWrap}>
-                    <Text style={styles.footerText}>Don’t have an account? </Text>
+                    <Text style={styles.footerText}>{t('dont_have_account')} </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-                        <Text style={styles.linkText}>Sign up</Text>
+                        <Text style={styles.linkText}>{t('sign_up')}</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>

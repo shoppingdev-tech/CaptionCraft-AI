@@ -5,12 +5,15 @@ const GEMINI_API_KEY = 'AIzaSyAMFawnVGYJ8872DXSq_8hMwc1myVCW0ho'; // Add your AP
 
 export const generateImageCaptions = createAsyncThunk(
   'captions/generateImageCaptions',
-  async ({ imageBase64, description, style }, { rejectWithValue }) => {
+  async ({ imageBase64, description, style }, { rejectWithValue, getState }) => {
+    const language = getState().auth.language || 'en'; // fallback to English
+
     const prompt = `
+    Please write all captions and hashtags in ${language}.
     Generate 5 professionally written social media captions based on this Description, Style, and image.
     
-    Description: "\${description}"
-    Style: "\${style}"
+    Description: "${description}"
+    Style: "${style}"
     
     Instructions:
     - Each caption must start with an emoji followed by two spaces.

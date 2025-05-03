@@ -12,12 +12,14 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
+import { useTranslation } from 'react-i18next';
 
 // Replace with your actual theme file or hardcode styles if not using a theme
 import { theme } from '../theme'; // Make sure this path is correct
 import { showToast } from './utils';
 
 export default function ForgotPasswordScreen({ navigation }) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [emailValid, setEmailValid] = useState(true);
@@ -37,14 +39,14 @@ export default function ForgotPasswordScreen({ navigation }) {
     }
 
     try {
-    setIsLoading(true);
+      setIsLoading(true);
       await auth().sendPasswordResetEmail(email);
-      showToast('success', 'Password reset email sent!');
+      showToast('success', t('reset_password'), t('reset_password_email_sent', 'Password reset email sent!'));
       setIsLoading(false);
       navigation.navigate('Login');
     } catch (error) {
       setIsLoading(false);
-      showToast('failed', error.message || 'Failed to send reset email.');
+      showToast('failed', t('sorry'), error.message || t('something_went_wrong'));
     }
   };
 
@@ -57,8 +59,8 @@ export default function ForgotPasswordScreen({ navigation }) {
     >
       <StatusBar translucent backgroundColor="transparent" />
       <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Forgot Password</Text>
-        <Text style={styles.subHeader}>Enter your email to reset password</Text>
+        <Text style={styles.header}>{t('forgot_password_title')}</Text>
+        <Text style={styles.subHeader}>{t('forgot_password_sub')}</Text>
 
         <TextInput
           style={[
@@ -68,7 +70,7 @@ export default function ForgotPasswordScreen({ navigation }) {
                 !emailValid && touched.email ? '#DC2626' : theme.colors.white,
             },
           ]}
-          placeholder="Email"
+          placeholder={t('email')}
           placeholderTextColor={theme.colors.white}
           keyboardType="email-address"
           autoCapitalize="none"
@@ -80,7 +82,7 @@ export default function ForgotPasswordScreen({ navigation }) {
           }}
         />
         {!emailValid && touched.email && (
-          <Text style={styles.errorText}>Please enter a valid email</Text>
+          <Text style={styles.errorText}>{t('valid_email')}</Text>
         )}
 
         <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
@@ -89,15 +91,14 @@ export default function ForgotPasswordScreen({ navigation }) {
                 isLoading ? (
                     <ActivityIndicator size={'small'} color={'white'} />
                 ) : (
-                    <Text style={styles.buttonText}>Reset Password</Text>
+                    <Text style={styles.buttonText}>{t('reset_password')}</Text>
                 )
             }
-           
           </View>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-          <Text style={styles.linkText}>Back to Login</Text>
+          <Text style={styles.linkText}>{t('back_to_login')}</Text>
         </TouchableOpacity>
       </KeyboardAwareScrollView>
     </LinearGradient>

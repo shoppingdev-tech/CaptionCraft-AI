@@ -7,6 +7,7 @@ const authSlice = createSlice({
     user: null,
     status: 'idle',
     error: null,
+    language: 'en',
   },
   reducers: {
     setUserFromFirebase: (state, action) => {
@@ -17,6 +18,9 @@ const authSlice = createSlice({
         ...state.user,
         ...action.payload,
       };
+    },
+    setLanguage: (state, action) => {
+      state.language = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -32,7 +36,6 @@ const authSlice = createSlice({
         state.status = 'failed';
         state.error = action.payload;
       })
-
 
       .addCase(fetchCurrentDetails.pending, (state) => {
         state.status = 'loading';
@@ -59,12 +62,11 @@ const authSlice = createSlice({
         state.error = action.payload;
       })
 
-
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
       });
   },
 });
 
-export const { setUserFromFirebase, updateUser } = authSlice.actions;
+export const { setUserFromFirebase, updateUser, setLanguage } = authSlice.actions;
 export default authSlice.reducer;

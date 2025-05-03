@@ -8,8 +8,10 @@ import { theme } from '../theme';
 import LinearGradient from 'react-native-linear-gradient';
 import { styles } from '../styles/favourite';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const FavouritesScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const { favouriteCaption } = useSelector((state) => state.favouriteCaptions);
   const { user } = useSelector((state) => state.auth);
 
@@ -23,7 +25,7 @@ const FavouritesScreen = ({ navigation }) => {
           end={{ x: 1, y: 0 }}
           style={[styles.gradientButton, { padding: 20, paddingTop: 50, alignItems: 'flex-start', borderRadius: 0, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
         >
-          <Text style={styles.title}>Your Favorite Captions!</Text>
+          <Text style={styles.title}>{t('your_favorite_captions')}</Text>
           <Text style={styles.title}>{user?.username}</Text>
         </LinearGradient>
       </View>
@@ -31,8 +33,8 @@ const FavouritesScreen = ({ navigation }) => {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Image resizeMode="contain"
             style={{ height: 200, width: 200, }} source={require('../assets/NoFavorite.png')} />
-          <Text style={styles.noFavorite}>No Favorite Yet</Text>
-          <Text style={styles.noFavoriteDesc}>Save your favorite captions here to find them easily later.</Text>
+          <Text style={styles.noFavorite}>{t('no_favorite_yet')}</Text>
+          <Text style={styles.noFavoriteDesc}>{t('save_favorite_desc')}</Text>
 
         </View>
       )}

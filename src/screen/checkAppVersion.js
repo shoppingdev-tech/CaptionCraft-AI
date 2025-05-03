@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   Modal,
   View,
@@ -8,12 +8,13 @@ import {
   Platform,
   Linking,
 } from 'react-native';
-import { ThemeContext } from '../../ThemeContext';
+import LinearGradient from 'react-native-linear-gradient';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { theme } from '../theme';
+import i18n from '../i18n';
+import purchaseStyles from '../styles/purchase';
 
-const UpdateModal = ({ visible, onConfirm }) => {
-    const { theme } = useContext(ThemeContext);
-
-
+const UpdateModal = ({ visible }) => {
   const storeUrl =
     Platform.OS === 'android'
       ? 'https://play.google.com/store/apps/details?id=com.yourapp.package'
@@ -21,27 +22,32 @@ const UpdateModal = ({ visible, onConfirm }) => {
 
   return (
     <Modal visible={visible} transparent animationType="fade">
-      <View style={[styles.overlay]}>
-        <View style={[styles.container, { backgroundColor: theme.background, borderColor: theme.borderColor }]}>
-          <Text style={[styles.title, { color: theme.primary }]}>Update Required</Text>
-          <Text style={[styles.message, { color: theme.text }]}>
-            A new version of the app is available. Please update to continue.
+      <View style={styles.overlay}>
+        <View style={styles.container}>
+          <View style={styles.titleRow}>
+            <Ionicons name="information-circle-outline" size={28} color={theme.colors.primary} style={styles.icon} />
+            <Text style={[styles.title, theme.fonts.h4StyleMedium, { color: theme.colors.primary }]}>{i18n.t('update_required')}</Text>
+          </View>
+          <Text style={[styles.message, theme.fonts.body1Style, { color: theme.colors.textPrimary }]}>
+            {i18n.t('new_version_available')}
           </Text>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: theme.buttonBackground }]}
-            onPress={() => {
-              Linking.openURL(storeUrl);
-              onConfirm(); // optional close action
-            }}
-          >
-            <Text style={[styles.buttonText, { color: theme.text }]}>Update Now</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonRight}>
+            <TouchableOpacity style={[purchaseStyles.button, {paddingVertical: 10}]} onPress={() => Linking.openURL(storeUrl)}>
+              <LinearGradient
+                colors={['#6366F1', '#D946EF']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={{paddingVertical: 12, paddingHorizontal: 15, borderRadius: 10  }}
+              >
+                <Text style={purchaseStyles.buttonText}>{i18n.t('update_now')}</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
-
 
 const styles = StyleSheet.create({
   overlay: {
@@ -54,30 +60,34 @@ const styles = StyleSheet.create({
     width: '85%',
     padding: 24,
     borderRadius: 16,
-    borderWidth: 1,
+    borderWidth: 3,
+    borderColor: theme.colors.primary,
+    backgroundColor: theme.colors.white,
+    alignItems: 'flex-start',
+  },
+  titleRow: {
+    flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  icon: {
+    marginRight: 8,
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
-    marginBottom: 10,
-    fontFamily: 'Poppins-Bold',
+    // font size reduced via theme.fonts.h4Style
   },
   message: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 24,
-    fontFamily: 'Poppins-Regular',
+    textAlign: 'left',
+    marginBottom: 10,
+    color: theme.colors.textPrimary,
+    alignSelf: 'flex-start',
   },
-  button: {
-    paddingVertical: 12,
-    paddingHorizontal: 30,
-    borderRadius: 8,
-  },
-  buttonText: {
-    fontWeight: '600',
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
+  buttonRight: {
+    alignSelf: 'flex-end',
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });
 

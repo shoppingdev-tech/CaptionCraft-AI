@@ -31,6 +31,8 @@
 		A2A3231950C249B094554D37 /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 51969D52ADD244C9AECF214F /* Poppins-ThinItalic.ttf */; };
 		9161B7A199F041A9A8065DAD /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D750FB37B7F44BEAEFF7D6D /* BootSplash.storyboard */; };
 		8F0991C351664574A965396A /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 666E8FA466B54165A7282C4D /* Colors.xcassets */; };
+		9549254905C741BD8DEAEE94 /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11890979E67A45C580150A65 /* BootSplash.storyboard */; };
+		0190B2ECA0C74F31ADE9F285 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BD6DAB22029A4F5F9B68E423 /* Colors.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +77,8 @@
 		51969D52ADD244C9AECF214F /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ThinItalic.ttf"; path = "../assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		4D750FB37B7F44BEAEFF7D6D /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "excusemeai/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		666E8FA466B54165A7282C4D /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "excusemeai/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
+		11890979E67A45C580150A65 /* BootSplash.storyboard */ = {isa = PBXFileReference; name = "BootSplash.storyboard"; path = "CaptionCraftAI/BootSplash.storyboard"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BD6DAB22029A4F5F9B68E423 /* Colors.xcassets */ = {isa = PBXFileReference; name = "Colors.xcassets"; path = "CaptionCraftAI/Colors.xcassets"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = folder.assetcatalog; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,6 +140,8 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
 				95F3FAFAD6494AF18D5E909B /* Resources */,
+				11890979E67A45C580150A65 /* BootSplash.storyboard */,
+				BD6DAB22029A4F5F9B68E423 /* Colors.xcassets */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -274,6 +280,8 @@
 				A2A3231950C249B094554D37 /* Poppins-ThinItalic.ttf in Resources */,
 				9161B7A199F041A9A8065DAD /* BootSplash.storyboard in Resources */,
 				8F0991C351664574A965396A /* Colors.xcassets in Resources */,
+				9549254905C741BD8DEAEE94 /* BootSplash.storyboard in Resources */,
+				0190B2ECA0C74F31ADE9F285 /* Colors.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

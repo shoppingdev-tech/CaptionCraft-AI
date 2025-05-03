@@ -19,8 +19,10 @@ import { theme } from '../theme';
 import { Picker } from '@react-native-picker/picker';
 import { generateImageCaptions } from '../redux/api';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 const HomeScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
@@ -73,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
           style={[styles.gradientButton, { justifyContent: 'space-between', flexDirection: 'row', padding: 20, paddingTop: 50, alignItems: 'center', borderRadius: 0, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
         >
           <View>
-            <Text style={styles.title}>Welcome Back!</Text>
+            <Text style={styles.title}>{t('welcome_back')}</Text>
             <Text style={styles.title}>{user?.username}</Text>
           </View>
           <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
@@ -84,32 +86,22 @@ const HomeScreen = ({ navigation }) => {
     
       <ScrollView style={[styles.container, styles.scrollView]}>
         <View style={styles.cardSection}>
-          <Text style={styles.stepTitle}>📸 Upload Image</Text>
-          <Text style={styles.stepText}>
-            Choose a photo from your gallery that you want to caption.
-          </Text>
+          <Text style={styles.stepTitle}>📸 {t('upload_image')}</Text>
+          <Text style={styles.stepText}>{t('choose_photo')}</Text>
 
-          <Text style={styles.stepTitle}>📝 Add Description</Text>
-          <Text style={styles.stepText}>
-            Briefly describe your image to get relevant captions.
-          </Text>
+          <Text style={styles.stepTitle}>📝 {t('add_description')}</Text>
+          <Text style={styles.stepText}>{t('briefly_describe')}</Text>
 
-          <Text style={styles.stepTitle}>🎨 Choose Style</Text>
-          <Text style={styles.stepText}>
-            Pick a style like Funny, Romantic, or Cool to match your mood.
-          </Text>
+          <Text style={styles.stepTitle}>🎨 {t('choose_style')}</Text>
+          <Text style={styles.stepText}>{t('pick_style')}</Text>
 
-          <Text style={styles.stepTitle}>⚡ Generate Captions</Text>
-          <Text style={styles.stepText}>
-            Tap the button and get a caption + hashtags instantly!
-          </Text>
+          <Text style={styles.stepTitle}>⚡ {t('generate_captions')}</Text>
+          <Text style={styles.stepText}>{t('generate_caption')}</Text>
 
-          <Text style={styles.stepTitle}>🌟 Save or Share</Text>
-          <Text style={styles.stepText}>
-            You can favorite captions, copy them, or share with friends.
-          </Text>
+          <Text style={styles.stepTitle}>🌟 {t('save_or_share')}</Text>
+          <Text style={styles.stepText}>{t('save_or_share')}</Text>
 
-          <Text style={styles.tokenNote}>Each request costs 10 tokens.</Text>
+          <Text style={styles.tokenNote}>{t('token_note')}</Text>
         </View>
         <View style={styles.buttonRowContainer}>
         <LinearGradient
@@ -119,7 +111,7 @@ const HomeScreen = ({ navigation }) => {
           style={styles.gradientButtonRow}
         >
           <TouchableOpacity onPress={() => navigation.navigate('GenerateCaptions')} style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>Generate</Text>
+            <Text style={styles.buttonText}>{t('generate')}</Text>
           </TouchableOpacity>
         </LinearGradient>
 

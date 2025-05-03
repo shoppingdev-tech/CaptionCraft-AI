@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addFavouriteCaption, removeFavouriteCaption } from '../redux/slices/favourite';
 import { useDisableBackHandler } from '../backHandlerUtils';
 import { copyToClipboard, handleShareLink, showToast } from './utils';
+import i18n from '../i18n';
 
 const CaptionDetailsScreen = ({ route, navigation }) => {
   useDisableBackHandler();
@@ -24,7 +25,7 @@ const CaptionDetailsScreen = ({ route, navigation }) => {
       image,
     }
     dispatch(addFavouriteCaption(payload));
-    showToast('success', 'Added!', 'Caption added to favorites! 💖');
+    showToast('success', i18n.t('added'), i18n.t('caption_added_to_favorites'));
   }
   const isFavorite = favouriteCaption && favouriteCaption?.find(fav => fav?.id == item?.id);
   return (
@@ -41,7 +42,7 @@ const CaptionDetailsScreen = ({ route, navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.favourite}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Ionicons name="arrow-back-sharp" size={24} color={theme.colors.white} />
-            <Text style={[styles.title, { marginLeft: 20 }]}>Caption Details</Text>
+            <Text style={[styles.title, { marginLeft: 20 }]}>{i18n.t('caption_details')}</Text>
           </View>
           <TouchableOpacity onPress={() => isFavorite ? dispatch(removeFavouriteCaption(item.id)) : favouriteItem()} style={styles.favouriteIcon}>
             <AntDesign name="heart" size={24} color={isFavorite ? theme.colors.primary : theme.colors.gray} />

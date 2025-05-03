@@ -1,6 +1,7 @@
 import Toast from 'react-native-toast-message';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { Share } from 'react-native';
+import i18n from '../i18n';
 
 export const showToast = (type, title, message) => {
   Toast.show({
@@ -12,7 +13,7 @@ export const showToast = (type, title, message) => {
 
 export const copyToClipboard = (text, callback = null) => {
   Clipboard.setString(text);
-  showToast('success', 'Copied successfully!', 'Feel free to paste it wherever you need.');
+  showToast('success', i18n.t('copied_success'), i18n.t('copied_success_desc'));
   if (callback) {
     callback();
   }
@@ -24,7 +25,6 @@ export const handleShareLink = async (message) => {
       message: message,
     });
   } catch (error) {
-    showToast('error', 'Sorry!', 'Something went wrong! Please try after sometimes');
-
+    showToast('error', i18n.t('sorry'), i18n.t('something_went_wrong'));
   }
 };

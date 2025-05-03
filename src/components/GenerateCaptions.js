@@ -14,6 +14,8 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Image from 'react-native-fast-image';
 import { launchImageLibrary } from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
+import { useTranslation } from 'react-i18next';
+import i18n from '../i18n';
 
 import { theme } from '../theme';
 import { styles } from '../styles/home';
@@ -23,6 +25,7 @@ import { showToast } from './utils';
 import { useDisableBackHandler } from '../backHandlerUtils';
 
 const GenerateCaptionScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   useDisableBackHandler();
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
@@ -65,7 +68,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
     try {
       const hasPermission = await requestGalleryPermission();
       if (!hasPermission) {
-        showToast('error', 'Permission', 'File permission is required to access the gallery. Please enable it in your device settings.');
+        showToast('error', i18n.t('permission'), i18n.t('file_permission_required'));
         return;
       }
       const result = await launchImageLibrary({
@@ -87,10 +90,10 @@ const GenerateCaptionScreen = ({ navigation }) => {
     
     try {
       if(isNaN(user?.token) || user?.token == 0 || user?.token < 0){
-        showToast('error', 'Token balance is zero!', 'Please contact support or admin to recharge');
+        showToast('error', i18n.t('token_zero'), i18n.t('token_zero_desc'));
         return;
       }
-      if (!imageBase64) return showToast('error', 'Upload', "Please upload an image");
+      if (!imageBase64) return showToast('error', i18n.t('upload_error'), i18n.t('upload_error_desc'));
       const userDoc = await firestore().collection('users').doc(user?.id).get();
       const userData = userDoc.data();
       firestore().collection('users').doc(user?.id).set(
@@ -108,17 +111,17 @@ const GenerateCaptionScreen = ({ navigation }) => {
   };
 
   const styleOptions = [
-    'Funny',
-    'Romantic',
-    'Love',
-    'Selfie',
-    'Foodie',
-    'Attitude',
-    'Trendy',
-    'Travel',
-    'Festival',
-    'Motivational',
-    'Friendship',
+    t('funny', 'Funny'),
+    t('romantic', 'Romantic'),
+    t('love', 'Love'),
+    t('selfie', 'Selfie'),
+    t('foodie', 'Foodie'),
+    t('attitude', 'Attitude'),
+    t('trendy', 'Trendy'),
+    t('travel', 'Travel'),
+    t('festival', 'Festival'),
+    t('motivational', 'Motivational'),
+    t('friendship', 'Friendship'),
   ];
   return (
     <View style={styles.container}>
@@ -146,7 +149,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
             fontFamily: 'Poppins-SemiBold',
             fontSize: 20,
           }}>
-            Generate
+            {t('generate')}
           </Text>
 
           <TouchableOpacity onPress={() => { }} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -171,10 +174,10 @@ const GenerateCaptionScreen = ({ navigation }) => {
                 <Icon name="image" size={30} color="#4F8EF7" />
               )
             }
-            <Text style={styles.uploadText}>Upload Image</Text>
+            <Text style={styles.uploadText}>{t('upload_image')}</Text>
           </TouchableOpacity>
           <TextInput
-            placeholder="Describe your post"
+            placeholder={t('describe_post')}
             placeholderTextColor={theme.colors.textSecondary}
             style={styles.input}
             multiline={true}
@@ -185,7 +188,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
         </View>
 
         <View style={{ marginHorizontal: 20, padding: 20, backgroundColor: theme.colors.lightGray, borderRadius: 10, marginBottom: 30 }}>
-          <Text style={styles.chooseStyleLabel}>Choose Style</Text>
+          <Text style={styles.chooseStyleLabel}>{t('choose_style')}</Text>
           <View style={styles.styleButtons}>
             {styleOptions.map((style) => (
               <TouchableOpacity
@@ -208,9 +211,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
             ))}
           </View>
         </View>
-        <View style={{ paddingBottom: 5, paddingHorizontal: 20 }}>
-          <Text style={styles.italictext}>Each request cost 10 Tokens</Text>
-        </View>
+        <Text style={styles.italictext}>{t('each_request_cost')}</Text>
         <TouchableOpacity onPress={() => handleGenerate()} style={styles.button}>
           <LinearGradient
             colors={['#6366F1', '#D946EF']}
@@ -218,7 +219,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
             end={{ x: 1, y: 0 }}
             style={styles.gradientButton}
           >
-            <Text style={styles.buttonText}>Generate Captions</Text>
+            <Text style={styles.buttonText}>{t('generate_captions')}</Text>
           </LinearGradient>
         </TouchableOpacity>
       </ScrollView>

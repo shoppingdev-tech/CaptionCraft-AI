@@ -8,17 +8,20 @@ import BootSplash from "react-native-bootsplash";
 import Main from './src';
 import mobileAds from 'react-native-google-mobile-ads';
 import { showAppOpenAd } from './src/AppOpenAdManager';
+import './src/i18n';
 
 const App = () => {
   useEffect(() => {
     BootSplash.hide({ fade: true });
     try {
-      mobileAds()
-        .initialize()
-        .then(adapterStatuses => {
-          showAppOpenAd();
+      if (!__DEV__) {
+        mobileAds()
+          .initialize()
+          .then(adapterStatuses => {
+            showAppOpenAd();
+          });
+      }
 
-        });
     } catch (error) {
       console.log('AdMob initialization error:', error);
     }

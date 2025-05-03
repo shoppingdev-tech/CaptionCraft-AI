@@ -1,0 +1,20 @@
+{
+  "change_language": "Cambiar idioma",
+  "your_favorite_captions": "¡Tus subtítulos favoritos!",
+  "no_favorite_yet": "Aún no hay favoritos",
+  "save_favorite_desc": "Guarda tus subtítulos favoritos aquí para encontrarlos fácilmente después.",
+  "update_required": "Actualización requerida",
+  "new_version_available": "Hay una nueva versión de la aplicación disponible. Por favor, actualiza para continuar.",
+  "update_now": "Actualizar ahora",
+  "added": "¡Añadido!",
+  "caption_added_to_favorites": "¡Subtítulo añadido a favoritos! 💖",
+  "removed": "¡Eliminado!",
+  "caption_removed_from_favorites": "Subtítulo eliminado de favoritos!",
+  "permission": "Permiso",
+  "file_permission_required": "Se requiere permiso de archivos para acceder a la galería. Por favor, actívalo en la configuración de tu dispositivo.",
+  "oops": "¡Vaya!",
+  "try_again_later": "Inténtalo de nuevo en unos segundos.",
+  "ok": "OK",
+  "reset_password_email_sent": "¡Correo de restablecimiento de contraseña enviado!",
+  "caption_details": "Detalles del subtítulo"
+} 

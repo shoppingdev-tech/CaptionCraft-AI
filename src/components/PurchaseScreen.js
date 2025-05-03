@@ -3,62 +3,63 @@ import { View, Text, TouchableOpacity, ScrollView, StatusBar } from 'react-nativ
 import styles from '../styles/purchase';
 import LinearGradient from 'react-native-linear-gradient';
 import { useSelector } from 'react-redux';
-
-const plans = [
-    {
-        title: 'Free Plan',
-        description: 'Includes 50 tokens and access to all basic features with ads (2 per request). Great to explore the app for free.',
-        price: '₹0 (Default)',
-        buttonText: 'Start for Free',
-        plan: 'FREE'
-    },
-    {
-        title: 'Ad-Free Add-on',
-        description: 'Remove all ads from the app. Combine with any token plan for an uninterrupted experience.',
-        price: '₹100',
-        buttonText: 'Go Ad-Free',
-        plan: 'ADD_FREE'
-    },
-    {
-        title: 'Starter Plan',
-        description: 'Get 100 tokens for casual use. Ads will be shown with each request.',
-        price: '₹50',
-        buttonText: 'Buy Starter Plan',
-        plan: 'STARTER'
-    },
-    {
-        title: 'Standard Plan',
-        description: 'Includes 200 tokens with ads. Ideal for regular users.',
-        price: '₹90',
-        buttonText: 'Buy Standard Plan',
-        plan: 'STANDERED'
-    },
-    {
-        title: 'Pro Plan',
-        description: '500 tokens for heavy usage with ads. Great for creators and small teams.',
-        price: '₹220',
-        buttonText: 'Buy Pro Plan',
-        plan: 'PRO',
-    },
-    {
-        title: 'Ultra Pro Plan',
-        description: '1000 tokens with ads. Best value for power users and businesses.',
-        price: '₹850',
-        buttonText: 'Buy Ultra Pro Plan',
-        plan: 'ULTRA_PRO',
-    },
-];
+import { useTranslation } from 'react-i18next';
 
 const PurchaseScreen = () => {
+    const { t } = useTranslation();
     const { user } = useSelector((state) => state.auth);
     console.log('user', user);
+    const plans = [
+        {
+            title: t('free_plan'),
+            description: t('free_plan_desc'),
+            price: '₹0 (Default)',
+            buttonText: t('start_for_free'),
+            plan: 'FREE'
+        },
+        {
+            title: t('ad_free_addon'),
+            description: t('ad_free_addon_desc'),
+            price: '₹100',
+            buttonText: t('go_ad_free'),
+            plan: 'ADD_FREE'
+        },
+        {
+            title: t('starter_plan'),
+            description: t('starter_plan_desc'),
+            price: '₹50',
+            buttonText: t('buy_starter_plan'),
+            plan: 'STARTER'
+        },
+        {
+            title: t('standard_plan'),
+            description: t('standard_plan_desc'),
+            price: '₹90',
+            buttonText: t('buy_standard_plan'),
+            plan: 'STANDERED'
+        },
+        {
+            title: t('pro_plan'),
+            description: t('pro_plan_desc'),
+            price: '₹220',
+            buttonText: t('buy_pro_plan'),
+            plan: 'PRO',
+        },
+        {
+            title: t('ultra_pro_plan'),
+            description: t('ultra_pro_plan_desc'),
+            price: '₹850',
+            buttonText: t('buy_ultra_pro_plan'),
+            plan: 'ULTRA_PRO',
+        },
+    ];
     return (
         <LinearGradient colors={['#6366F1', '#D946EF']} start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }} style={styles.gradientBackground}>
             <StatusBar translucent backgroundColor={'transparent'} />
 
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.title}>Choose Your Plan</Text>
+                <Text style={styles.title}>{t('choose_plan')}</Text>
 
                 {plans.map((plan, index) => {
                     const isDisbled= user?.plan == 'FREE' && plan?.plan == user?.plan || user?.isAddFree && plan?.plan == 'ADD_FREE'

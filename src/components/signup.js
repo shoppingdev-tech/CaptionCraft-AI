@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useTranslation } from 'react-i18next';
 
 import { theme } from '../theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { signupUser } from '../redux/thunk/auth';
 
 export default function SignupScreen({ navigation }) {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -40,14 +42,12 @@ export default function SignupScreen({ navigation }) {
         'guerrillamail.com',
         'trashmail.com',
         'getnada.com',
-        // Add more known ones here
-      ];
+    ];
 
-      const isDisposableEmail = (email) => {
+    const isDisposableEmail = (email) => {
         const domain = email.split('@')[1]?.toLowerCase();
         return disposableDomains.includes(domain);
-      };
-      
+    };
 
     const handleSignup = async () => {
         validateUsername();
@@ -55,8 +55,8 @@ export default function SignupScreen({ navigation }) {
         validatePassword();
         if (isDisposableEmail(email)) {
             setEmailValid(false);
-            return
-          }
+            return;
+        }
         setTouched({ username: true, email: true, password: true });
 
         if (!usernameValid || !emailValid || !passwordValid) {
@@ -77,9 +77,9 @@ export default function SignupScreen({ navigation }) {
             style={{ flex: 1 }}
         >
             <StatusBar translucent backgroundColor={'transparent'} />
-            <KeyboardAwareScrollView  contentContainerStyle={styles.container}>
-                <Text style={styles.header}>Create Account</Text>
-                <Text style={styles.subHeader}>Sign up to get started</Text>
+            <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+                <Text style={styles.header}>{t('create_account')}</Text>
+                <Text style={styles.subHeader}>{t('sign_up_to_get_started')}</Text>
 
                 <TextInput
                     style={[
@@ -89,7 +89,7 @@ export default function SignupScreen({ navigation }) {
                                 !usernameValid && touched.username ? theme.colors.redError : theme.colors.white,
                         },
                     ]}
-                    placeholder="Username"
+                    placeholder={t('username')}
                     placeholderTextColor={theme.colors.placeHolder}
                     value={username}
                     onChangeText={setUsername}
@@ -99,7 +99,7 @@ export default function SignupScreen({ navigation }) {
                     }}
                 />
                 {!usernameValid && touched.username && (
-                    <Text style={styles.errorText}>Username is required</Text>
+                    <Text style={styles.errorText}>{t('username_required')}</Text>
                 )}
 
                 <TextInput
@@ -110,7 +110,7 @@ export default function SignupScreen({ navigation }) {
                                 !emailValid && touched.email ? theme.colors.redError : theme.colors.white,
                         },
                     ]}
-                    placeholder="Email"
+                    placeholder={t('email')}
                     placeholderTextColor={theme.colors.placeHolder}
                     keyboardType="email-address"
                     value={email}
@@ -122,7 +122,7 @@ export default function SignupScreen({ navigation }) {
                     }}
                 />
                 {!emailValid && touched.email && (
-                    <Text style={styles.errorText}>Please enter a valid email</Text>
+                    <Text style={styles.errorText}>{t('valid_email')}</Text>
                 )}
 
                 <View style={styles.passwordContainer}>
@@ -134,7 +134,7 @@ export default function SignupScreen({ navigation }) {
                                     !passwordValid && touched.password ? theme.colors.redError : theme.colors.white,
                             },
                         ]}
-                        placeholder="Password"
+                        placeholder={t('password')}
                         placeholderTextColor={theme.colors.placeHolder}
                         secureTextEntry={!showPassword}
                         value={password}
@@ -155,21 +155,21 @@ export default function SignupScreen({ navigation }) {
                     </TouchableOpacity>
                 </View>
                 {!passwordValid && touched.password && (
-                    <Text style={styles.errorText}>Password must be at least 6 characters</Text>
+                    <Text style={styles.errorText}>{t('password_required')}</Text>
                 )}
                 <TouchableOpacity onPress={handleSignup} style={styles.button}>
                     <View style={styles.gradientButton}>
                         {status == 'loading' ? (
-                            <ActivityIndicator size="small" color="#FFFFFF" /> // 👈 Loader here
+                            <ActivityIndicator size="small" color="#FFFFFF" />
                         ) : (
-                            <Text style={styles.buttonText}>Sign Up</Text>
+                            <Text style={styles.buttonText}>{t('sign_up')}</Text>
                         )}
                     </View>
                 </TouchableOpacity>
                 <View style={styles.footerTextWrap}>
-                    <Text style={styles.footerText}>Already have an account? </Text>
+                    <Text style={styles.footerText}>{t('already_have_account')} </Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                        <Text style={styles.linkText}>Login</Text>
+                        <Text style={styles.linkText}>{t('login')}</Text>
                     </TouchableOpacity>
                 </View>
             </KeyboardAwareScrollView>

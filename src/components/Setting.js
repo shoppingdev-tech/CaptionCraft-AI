@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 
 import { theme } from '../theme';
 import { styles as homeStyle } from '../styles/home';
@@ -19,6 +20,7 @@ import LogoutModal from './logout';
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   useDisableBackHandler();
   const { user } = useSelector((state) => state.auth);
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
@@ -53,7 +55,7 @@ const SettingsScreen = ({ navigation }) => {
               fontSize: 20,
               marginLeft: 20
             }}>
-              Settings
+              {t('settings')}
             </Text>
           </TouchableOpacity>
         </LinearGradient>
@@ -61,24 +63,29 @@ const SettingsScreen = ({ navigation }) => {
       <ScrollView style={styles.container}>
         {/* Token Card */}
         <View style={styles.tokenCard}>
-          <Text style={styles.tokenTitle}>Available Tokens</Text>
+          <Text style={styles.tokenTitle}>{t('available_tokens')}</Text>
           <Text style={styles.tokenValue}>{user?.token ?? 0}</Text>
         </View>
 
         {/* Options */}
         <View style={styles.optionsWrapper}>
           {/* <SettingItem
-            title="Change Password"
+            title={t('change_password')}
             icon="lock-open-outline"
             onPress={() => navigation.navigate('ChangePassword')}
           /> */}
           {/* <SettingItem
-            title="Buy Tokens"
+            title={t('buy_tokens')}
             icon="battery-half"
             onPress={() => navigation.navigate('Packs')}
           /> */}
           <SettingItem
-            title="Logout"
+            title={t('change_language', 'Change Language')}
+            icon="language-outline"
+            onPress={() => navigation.navigate('ChangeLanguage')}
+          />
+          <SettingItem
+            title={t('logout')}
             icon="trail-sign-outline"
             onPress={() =>setIsLogoutModalVisible(true)}
           />
