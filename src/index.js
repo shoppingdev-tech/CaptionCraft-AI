@@ -1,36 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import auth from '@react-native-firebase/auth';
 import Toast from 'react-native-toast-message';
 import firestore from '@react-native-firebase/firestore';
 import i18n from './i18n';
 import DeviceInfo from 'react-native-device-info';
 import UpdateModal from './screen/checkAppVersion';
 
-import AuthNavigation from './navigation/AuthNavigation';
-import AppNavigation from './navigation/Navigation';
-import { setUserFromFirebase } from './redux/slices/authSlice';
-import { fetchCurrentDetails, logout } from './redux/thunk/auth';
-import VerifyStackNavigator from './navigation/VerifyUser';
 import CustomToast from './components/toast';
+import HomeStackNavigator from './navigation/HomeStack';
 
 const Main = () => {
   const dispatch = useDispatch();
-  const { user, language } = useSelector((state) => state.auth);
+  const { language } = useSelector((state) => state.auth);
   const prevLang = useRef();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = auth().onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        dispatch(fetchCurrentDetails({uid: firebaseUser.uid}));
-      } else {
-        dispatch(logout());
-      }
-    });
-    return () => unsubscribe();
-  }, []);
 
   // Update i18n language when Redux language changes
   useEffect(() => {
@@ -73,7 +57,7 @@ const Main = () => {
   return (
     <>
       <NavigationContainer>
-        {user ? user?.isVerified ? <AppNavigation /> : <VerifyStackNavigator /> : <AuthNavigation />}
+        {<HomeStackNavigator />}
         <Toast
           position="bottom"
           config={{

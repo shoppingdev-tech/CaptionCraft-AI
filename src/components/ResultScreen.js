@@ -2,48 +2,77 @@ import React, { useEffect, useState } from 'react';
 import {
     View,
     Text,
-    TextInput,
-    ScrollView,
     StatusBar,
     FlatList,
-    ActivityIndicator,
     TouchableOpacity
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Image from 'react-native-fast-image';
 import { styles } from '../styles/result';
 import CaptionCard from './card/CaptionCard';
-import { fetchCurrentDetails } from '../redux/thunk/auth';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { theme } from '../theme';
 import RectangleSkeleton from './skeleton/result';
 import { useDisableBackHandler } from '../backHandlerUtils';
 import { logScreenView, logEvent } from '../firebaseAnalytics';
 import { useTranslation } from 'react-i18next';
+import {
+    BannerAd,
+    BannerAdSize,
+} from 'react-native-google-mobile-ads';
+import { InterstitialAdUnitId, ResultScreenBanner } from '../../adsConfig';
+import {
+    RewardedAd,
+    RewardedAdEventType,
+} from 'react-native-google-mobile-ads';
+
 
 const ResultScreen = ({ route, navigation }) => {
-  useDisableBackHandler();
-    const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
-    console.log('user', user?.id);
+    useDisableBackHandler();
+    const [isAdsLoaded, setIsAdsLoaded] = useState(true);
+
+    useEffect(() => {
+        const rewarded = RewardedAd.createForAdRequest(InterstitialAdUnitId, {
+            requestNonPersonalizedAdsOnly: true,
+        });
+
+        const unsubscribeLoaded = rewarded.addAdEventListener(
+            RewardedAdEventType.LOADED,
+            () => {
+                rewarded.show();
+            }
+        );
+
+        const unsubscribeEarned = rewarded.addAdEventListener(
+            RewardedAdEventType.EARNED_REWARD,
+            (reward) => {
+                console.log('🎉 User earned reward: ', reward);
+                // Grant the user access to the result here
+            }
+        );
+
+        rewarded.load(); // Automatically load and trigger show on load
+
+        return () => {
+            unsubscribeLoaded();
+            unsubscribeEarned();
+        };
+    }, []);
+
+
     const { t } = useTranslation();
     useEffect(() => {
-        dispatch(fetchCurrentDetails({uid: user?.id}));
-        // Log screen view when component mounts
         logScreenView('ResultScreen');
     }, [loading])
     const image = route?.params?.image;
     const { captions, loading } = useSelector((state) => state.captions);
 
     const handleBackPress = () => {
-        logEvent('result_screen_back_pressed', {
-            user_id: user?.id,
-            username: user?.username
-        });
+        logEvent('result_screen_back_pressed');
         navigation.reset({
             index: 0,
-            routes: [{ name: 'Home' }],
+            routes: [{ name: 'HomeScreen' }],
         });
     };
 
@@ -81,6 +110,25 @@ const ResultScreen = ({ route, navigation }) => {
                     </TouchableOpacity>
                 </LinearGradient>
             </View>
+            {
+                isAdsLoaded && (
+                    <View style={{ marginTop: 20 }}>
+                        <BannerAd
+                            unitId={ResultScreenBanner}
+                            size={BannerAdSize.ADAPTIVE_BANNER}
+                            requestOptions={{
+                                requestNonPersonalizedAdsOnly: true,
+                            }}
+                            onAdLoaded={() => {
+                                setIsAdsLoaded(true);
+                            }}
+                            onAdFailedToLoad={(error) => {
+                                setIsAdsLoaded(false);
+                            }}
+                        />
+                    </View>
+                )
+            }
             <View style={{ marginTop: 20, flex: 1 }}>
                 <Image
                     source={{ uri: image.uri }} // Replace with your image

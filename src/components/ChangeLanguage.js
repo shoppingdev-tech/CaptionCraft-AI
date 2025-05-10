@@ -23,13 +23,9 @@ const LANGUAGES = [
 const ChangeLanguageScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const selectedLanguage = useSelector((state) => {
-    console.log('selectedLanguage', state.auth);
-    return state.auth.language;
-  });
+  const selectedLanguage = useSelector((state) => state.auth.language);
 
   useEffect(() => {
-    // Log screen view when component mounts
     logScreenView('ChangeLanguageScreen');
   }, []);
 

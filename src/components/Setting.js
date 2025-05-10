@@ -13,19 +13,24 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
 import { logScreenView, logEvent } from '../firebaseAnalytics';
+import {
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
 import { theme } from '../theme';
 import { styles as homeStyle } from '../styles/home';
 import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../redux/thunk/auth';
 import { useDisableBackHandler } from '../backHandlerUtils';
 import LogoutModal from './logout';
+import { SettingScreenBanner } from '../../adsConfig';
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   useDisableBackHandler();
-  const { user } = useSelector((state) => state.auth);
+  const [isAdsLoaded, setIsAdsLoaded] = useState(true);
+
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
 
   useEffect(() => {
@@ -34,34 +39,22 @@ const SettingsScreen = ({ navigation }) => {
   }, []);
 
   const handleBackPress = () => {
-    logEvent('settings_back_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('settings_back_pressed');
     navigation.goBack();
   };
 
   const handleLogoutPress = () => {
-    logEvent('logout_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('logout_pressed');
     setIsLogoutModalVisible(true);
   };
 
   const handleLanguagePress = () => {
-    logEvent('language_settings_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('language_settings_pressed');
     navigation.navigate('ChangeLanguage');
   };
 
   const handlePrivacyPolicyPress = () => {
-    logEvent('privacy_policy_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('privacy_policy_pressed');
     Linking.openURL('https://raw.githubusercontent.com/shoppingdev-tech/caption-craft-ai/main/privacy-policy.md');
   };
 
@@ -98,25 +91,28 @@ const SettingsScreen = ({ navigation }) => {
           </TouchableOpacity>
         </LinearGradient>
       </View>
-      <ScrollView style={styles.container}>
-        {/* Token Card */}
-        <View style={styles.tokenCard}>
-          <Text style={styles.tokenTitle}>{t('available_tokens')}</Text>
-          <Text style={styles.tokenValue}>{user?.token ?? 0}</Text>
-        </View>
+      {
+        isAdsLoaded && (
+          <View style={{ marginTop: 20 }}>
+            <BannerAd
+              unitId={SettingScreenBanner}
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                setIsAdsLoaded(true);
+              }}
+              onAdFailedToLoad={(error) => {
+                setIsAdsLoaded(false);
+              }}
+            />
+          </View>
+        )
+      }
 
-        {/* Options */}
+      <ScrollView style={styles.container}>
         <View style={styles.optionsWrapper}>
-          {/* <SettingItem
-            title={t('change_password')}
-            icon="lock-open-outline"
-            onPress={() => navigation.navigate('ChangePassword')}
-          /> */}
-          {/* <SettingItem
-            title={t('buy_tokens')}
-            icon="battery-half"
-            onPress={() => navigation.navigate('Packs')}
-          /> */}
           <SettingItem
             title={t('change_language', 'Change Language')}
             icon="language-outline"
@@ -133,19 +129,6 @@ const SettingsScreen = ({ navigation }) => {
             onPress={handleLogoutPress}
           />
         </View>
-
-        {/* Remove Ads Button */}
-        {/* <Text style={styles.sectionLabel}>Want ad-free experience?</Text> */}
-        {/* <LinearGradient
-          colors={['#6366F1', '#D946EF']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.removeAdsButton}
-        >
-          <TouchableOpacity onPress={() => navigation.navigate('RemoveAds')} style={styles.removeAdsTouchable}>
-            <Text style={styles.removeAdsText}>Remove Ads</Text>
-        </TouchableOpacity>
-        </LinearGradient> */}
       </ScrollView>
       <LogoutModal visible={isLogoutModalVisible} onConfirm={() => dispatch(logout())} onClose={() => setIsLogoutModalVisible(false)} />
     </View>

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   PermissionsAndroid,
   Platform,
@@ -12,29 +11,22 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
-import Image from 'react-native-fast-image';
-import { launchImageLibrary } from 'react-native-image-picker';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { logScreenView, logEvent } from '../firebaseAnalytics';
-
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import { theme } from '../theme';
-import { Picker } from '@react-native-picker/picker';
-import { generateImageCaptions } from '../redux/api';
-import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { HomeBanner } from '../../adsConfig';
 
 const HomeScreen = ({ navigation }) => {
   const { t } = useTranslation();
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null);
-  const [imageBase64, setImageBase64] = useState(null);
-  const [selectedStyle, setSelectedStyle] = useState('Funny');
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  console.log('user', user?.username);
-
+  const [isAdsLoaded, setIsAdsLoaded] = useState(true);
   useEffect(() => {
     requestGalleryPermission();
-    // Log screen view when component mounts
     logScreenView('HomeScreen');
   }, [])
 
@@ -68,18 +60,12 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const handleGeneratePress = () => {
-    logEvent('generate_captions_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('generate_captions_pressed');
     navigation.navigate('GenerateCaptions');
   };
 
   const handleSettingsPress = () => {
-    logEvent('settings_pressed', {
-      user_id: user?.id,
-      username: user?.username
-    });
+    logEvent('settings_pressed');
     navigation.navigate('Settings');
   };
 
@@ -95,14 +81,36 @@ const HomeScreen = ({ navigation }) => {
         >
           <View>
             <Text style={styles.title}>{t('welcome_back')}</Text>
-            <Text style={styles.title}>{user?.username}</Text>
           </View>
-          <TouchableOpacity onPress={handleSettingsPress}>
-            <Icon name='settings' color={theme.colors.white} size={30} />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Favourites')}>
+              <MaterialIcons name='favorite' color={theme.colors.white} size={30} />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleSettingsPress}>
+              <Icon name='settings' color={theme.colors.white} size={30} />
+            </TouchableOpacity>
+          </View>
         </LinearGradient>
       </View>
-    
+      {
+        isAdsLoaded && (
+          <View style={{ marginTop: 20 }}>
+            <BannerAd
+              unitId={HomeBanner}
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                setIsAdsLoaded(true);
+              }}
+              onAdFailedToLoad={(error) => {
+                setIsAdsLoaded(false);
+              }}
+            />
+          </View>
+        )
+      }
       <ScrollView style={[styles.container, styles.scrollView]}>
         <View style={styles.cardSection}>
           <Text style={styles.stepTitle}>📸 {t('upload_image')}</Text>
@@ -123,28 +131,17 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.tokenNote}>{t('token_note')}</Text>
         </View>
         <View style={styles.buttonRowContainer}>
-        <LinearGradient
-          colors={['#6366F1', '#D946EF']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradientButtonRow}
-        >
-          <TouchableOpacity onPress={handleGeneratePress} style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>{t('generate')}</Text>
-          </TouchableOpacity>
-        </LinearGradient>
-
-        {/* <LinearGradient
-          colors={['#6366F1', '#D946EF']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.gradientButtonRow}
-        >
-          <TouchableOpacity onPress={() => navigation.navigate('Packs')} style={styles.buttonTouchable}>
-            <Text style={styles.buttonText}>Buy Tokens</Text>
-          </TouchableOpacity>
-        </LinearGradient> */}
-      </View>
+          <LinearGradient
+            colors={['#6366F1', '#D946EF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientButtonRow}
+          >
+            <TouchableOpacity onPress={handleGeneratePress} style={styles.buttonTouchable}>
+              <Text style={styles.buttonText}>{t('generate')}</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+        </View>
       </ScrollView>
     </View>
   );

@@ -1,34 +1,78 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Image from 'react-native-fast-image'
+import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
 import { theme } from '../theme';
 import LinearGradient from 'react-native-linear-gradient';
 import { styles } from '../styles/favourite';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { FavouriteScreenBanner } from '../../adsConfig';
 
 const FavouritesScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const { favouriteCaption } = useSelector((state) => state.favouriteCaptions);
-  const { user } = useSelector((state) => state.auth);
-
+  const [isAdsLoaded, setIsAdsLoaded] = useState(true);
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor={'transparent'} />
-      <View style={{}}>
+      <View style={{ backgroundColor: '#F3F4F6' }}>
         <LinearGradient
           colors={['#6366F1', '#D946EF']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          style={[styles.gradientButton, { padding: 20, paddingTop: 50, alignItems: 'flex-start', borderRadius: 0, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 10
+          }}
         >
-          <Text style={styles.title}>{t('your_favorite_captions')}</Text>
-          <Text style={styles.title}>{user?.username}</Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}>
+            <View >
+              <Icon name="arrow-back-sharp" size={24} color={theme.colors.white} />
+            </View>
+            <Text style={{
+              color: theme.colors.white,
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              marginLeft: 20
+            }}>
+              {t('your_captions')}
+            </Text>
+          </TouchableOpacity>
         </LinearGradient>
       </View>
+      {
+        isAdsLoaded && (
+          <View style={{ marginTop: 20 }}>
+            <BannerAd
+              unitId={FavouriteScreenBanner}
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                setIsAdsLoaded(true);
+              }}
+              onAdFailedToLoad={(error) => {
+                setIsAdsLoaded(false);
+              }}
+            />
+          </View>
+        )
+      }
       {favouriteCaption && favouriteCaption.length == 0 && (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Image resizeMode="contain"

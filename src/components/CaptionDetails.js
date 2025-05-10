@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, StatusBar, TouchableOpacity } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
 import { styles } from '../styles/captionDetails';
 import { theme } from '../theme';
@@ -12,13 +16,14 @@ import { addFavouriteCaption, removeFavouriteCaption } from '../redux/slices/fav
 import { useDisableBackHandler } from '../backHandlerUtils';
 import { copyToClipboard, handleShareLink, showToast } from './utils';
 import i18n from '../i18n';
+import { DetailsScreenBanner } from '../../adsConfig';
 
 const CaptionDetailsScreen = ({ route, navigation }) => {
   useDisableBackHandler();
   const { item, image } = route.params; // Make sure to pass this from the previous screen
   const dispatch = useDispatch();
   const { favouriteCaption } = useSelector((state) => state.favouriteCaptions);
-
+  const [isAdsLoaded, setIsAdsLoaded] = useState(true);
   const favouriteItem = () => {
     const payload = {
       ...item,
@@ -49,6 +54,25 @@ const CaptionDetailsScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </TouchableOpacity>
       </LinearGradient>
+      {
+        isAdsLoaded && (
+          <View style={{ marginTop: 20 }}>
+            <BannerAd
+              unitId={DetailsScreenBanner}
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                setIsAdsLoaded(true);
+              }}
+              onAdFailedToLoad={(error) => {
+                setIsAdsLoaded(false);
+              }}
+            />
+          </View>
+        )
+      }
       <ScrollView contentContainerStyle={styles.scrollView}>
         <FastImage
           source={{ uri: image.uri }}

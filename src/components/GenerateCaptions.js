@@ -13,17 +13,21 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Image from 'react-native-fast-image';
 import { launchImageLibrary } from 'react-native-image-picker';
-import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
 import { logScreenView, logEvent } from '../firebaseAnalytics';
+import {
+  BannerAd,
+  BannerAdSize,
+} from 'react-native-google-mobile-ads';
 
 import { theme } from '../theme';
 import { styles } from '../styles/home';
 import { generateImageCaptions } from '../redux/api';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { showToast } from './utils';
 import { useDisableBackHandler } from '../backHandlerUtils';
+import { GenerateScreenBanner } from '../../adsConfig';
 
 const GenerateCaptionScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -32,8 +36,9 @@ const GenerateCaptionScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [imageBase64, setImageBase64] = useState(null);
   const [selectedStyle, setSelectedStyle] = useState('Funny');
+  const [isAdsLoaded, setIsAdsLoaded] = useState(true);
+
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     // Log screen view when component mounts
@@ -85,47 +90,22 @@ const GenerateCaptionScreen = ({ navigation }) => {
       if (!result.didCancel && result.assets && result.assets.length > 0) {
         setImage(result.assets[0]);
         setImageBase64(result.assets[0].base64);
-        logEvent('image_selected', {
-          user_id: user?.id,
-          username: user?.username,
-          image_size: result.assets[0].fileSize
-        });
+        logEvent('image_selected');
       }
     } catch (error) {
-      console.log('error', error);
+      // console.log('error', error);
     }
   };
 
   const handleGenerate = async () => {
     try {
-      if(isNaN(user?.token) || user?.token == 0 || user?.token < 0){
-        showToast('error', i18n.t('token_zero'), i18n.t('token_zero_desc'));
-        return;
-      }
       if (!imageBase64) return showToast('error', i18n.t('upload_error'), i18n.t('upload_error_desc'));
-      
-      logEvent('caption_generation_started', {
-        user_id: user?.id,
-        username: user?.username,
-        style: selectedStyle,
-        has_description: !!description
-      });
-
-      const userDoc = await firestore().collection('users').doc(user?.id).get();
-      const userData = userDoc.data();
-      firestore().collection('users').doc(user?.id).set(
-        { token: Number(userData?.token) - 10 },
-        { merge: true }
-      );
-
+      logEvent('caption_generation_started');
       dispatch(generateImageCaptions({ imageBase64, description, selectedStyle }));
       navigation.navigate('ResultScreen', { image });
 
     } catch (error) {
-      console.log('error', error);
       logEvent('caption_generation_error', {
-        user_id: user?.id,
-        username: user?.username,
         error: error.message
       });
     }
@@ -134,8 +114,6 @@ const GenerateCaptionScreen = ({ navigation }) => {
   const handleStyleSelect = (style) => {
     setSelectedStyle(style);
     logEvent('style_selected', {
-      user_id: user?.id,
-      username: user?.username,
       style: style
     });
   };
@@ -183,18 +161,32 @@ const GenerateCaptionScreen = ({ navigation }) => {
           </Text>
 
           <TouchableOpacity onPress={() => { }} style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={{
-              color: theme.colors.white,
-              fontFamily: 'Poppins-Medium',
-              fontSize: 16,
-              marginLeft: 6,
-            }}>
-              {user?.token}
-            </Text>
+            <Text />
           </TouchableOpacity>
         </LinearGradient>
       </View>
-      <ScrollView style={{ marginTop: 20 }}>
+      {
+        isAdsLoaded && (
+          <View style={{ marginTop: 20 }}>
+            <BannerAd
+              unitId={GenerateScreenBanner}
+              size={BannerAdSize.ADAPTIVE_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                setIsAdsLoaded(true);
+              }}
+              onAdFailedToLoad={(error) => {
+                console.log('error', error);
+                setIsAdsLoaded(false);
+              }}
+            />
+          </View>
+        )
+      }
+
+      <ScrollView style={{ marginTop: 20, marginBottom: 100 }}>
         <View style={{ marginHorizontal: 20, padding: 20, backgroundColor: theme.colors.lightGray, borderRadius: 10, marginBottom: 20 }}>
           <TouchableOpacity onPress={pickImage} style={styles.uploadContainer}>
             {

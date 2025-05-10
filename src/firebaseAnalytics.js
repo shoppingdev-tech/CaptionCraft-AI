@@ -47,23 +47,3 @@ export const logScreenView = async (screenName, className = null) => {
         console.warn('Analytics logScreenView error:', error);
     }
 };
-
-// Set user ID
-export const setUserId = async (userId) => {
-    if (!isAnalyticsEnabled) return;
-    try {
-        await analytics().setUserId(userId);
-    } catch (error) {
-        console.warn('Analytics setUserId error:', error);
-    }
-};
-
-// Set user properties
-export const setUserProperty = async (name, value) => {
-    if (!isAnalyticsEnabled) return;
-    try {
-        await analytics().setUserProperty(name, value);
-    } catch (error) {
-        console.warn('Analytics setUserProperty error:', error);
-    }
-};
