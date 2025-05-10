@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,13 @@ import {
   ScrollView,
   StatusBar,
   StyleSheet,
+  Linking,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTranslation } from 'react-i18next';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 import { theme } from '../theme';
 import { styles as homeStyle } from '../styles/home';
@@ -24,7 +27,43 @@ const SettingsScreen = ({ navigation }) => {
   useDisableBackHandler();
   const { user } = useSelector((state) => state.auth);
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
-  console.log('visible', isLogoutModalVisible);
+
+  useEffect(() => {
+    // Log screen view when component mounts
+    logScreenView('SettingsScreen');
+  }, []);
+
+  const handleBackPress = () => {
+    logEvent('settings_back_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    navigation.goBack();
+  };
+
+  const handleLogoutPress = () => {
+    logEvent('logout_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    setIsLogoutModalVisible(true);
+  };
+
+  const handleLanguagePress = () => {
+    logEvent('language_settings_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    navigation.navigate('ChangeLanguage');
+  };
+
+  const handlePrivacyPolicyPress = () => {
+    logEvent('privacy_policy_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    Linking.openURL('https://raw.githubusercontent.com/shoppingdev-tech/caption-craft-ai/main/privacy-policy.md');
+  };
 
   return (
     <View style={homeStyle.container}>
@@ -38,13 +77,12 @@ const SettingsScreen = ({ navigation }) => {
             paddingHorizontal: 20,
             paddingTop: 40,
             paddingBottom: 10
-            // paddingVertical: 20,
           }}
         >
           <TouchableOpacity style={{
             flexDirection: 'row',
             alignItems: 'center',
-          }} onPress={() => navigation.goBack()}>
+          }} onPress={handleBackPress}>
             <View>
               <Icon name="arrow-back-sharp" size={24} color={theme.colors.white} />
             </View>
@@ -82,12 +120,17 @@ const SettingsScreen = ({ navigation }) => {
           <SettingItem
             title={t('change_language', 'Change Language')}
             icon="language-outline"
-            onPress={() => navigation.navigate('ChangeLanguage')}
+            onPress={handleLanguagePress}
           />
+          <TouchableOpacity style={styles.item} onPress={handlePrivacyPolicyPress}>
+            <MaterialIcons name={'security'} size={24} color={theme.colors.primary} />
+            <Text style={styles.itemText}>{t('privacy_policy')}</Text>
+            <Icon name="chevron-forward" size={22} color={theme.colors.gray} style={styles.arrow} />
+          </TouchableOpacity>
           <SettingItem
             title={t('logout')}
             icon="trail-sign-outline"
-            onPress={() =>setIsLogoutModalVisible(true)}
+            onPress={handleLogoutPress}
           />
         </View>
 
@@ -101,7 +144,7 @@ const SettingsScreen = ({ navigation }) => {
         >
           <TouchableOpacity onPress={() => navigation.navigate('RemoveAds')} style={styles.removeAdsTouchable}>
             <Text style={styles.removeAdsText}>Remove Ads</Text>
-          </TouchableOpacity>
+        </TouchableOpacity>
         </LinearGradient> */}
       </ScrollView>
       <LogoutModal visible={isLogoutModalVisible} onConfirm={() => dispatch(logout())} onClose={() => setIsLogoutModalVisible(false)} />

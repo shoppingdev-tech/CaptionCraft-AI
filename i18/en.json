@@ -80,5 +80,20 @@
   "try_again_later": "Try again in a few seconds.",
   "ok": "OK",
   "reset_password_email_sent": "Password reset email sent!",
-  "caption_details": "Caption Details"
+  "caption_details": "Caption Details",
+  "language_changed": "Language Changed",
+  "language_changed_success": "Your language has been updated successfully!",
+  "privacy_policy": "Privacy Policy",
+  "funny": "Funny",
+  "romantic": "Romantic",
+  "love": "Love",
+  "selfie": "Selfie",
+  "foodie": "Foodie",
+  "attitude": "Attitude",
+  "trendy": "Trendy",
+  "travel": "Travel",
+  "festival": "Festival",
+  "motivational": "Motivational",
+  "friendship": "Friendship",
+  "your_captions": "Your Captions!"
 } 

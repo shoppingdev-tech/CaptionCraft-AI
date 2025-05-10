@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import auth from '@react-native-firebase/auth';
 import { useTranslation } from 'react-i18next';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 // Replace with your actual theme file or hardcode styles if not using a theme
 import { theme } from '../theme'; // Make sure this path is correct
@@ -25,6 +26,11 @@ export default function ForgotPasswordScreen({ navigation }) {
   const [emailValid, setEmailValid] = useState(true);
   const [touched, setTouched] = useState({ email: false });
 
+  useEffect(() => {
+    // Log screen view when component mounts
+    logScreenView('ForgotPasswordScreen');
+  }, []);
+
   const validateEmail = () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     setEmailValid(emailRegex.test(email));
@@ -34,12 +40,15 @@ export default function ForgotPasswordScreen({ navigation }) {
     validateEmail();
     setTouched({ email: true });
 
-    if (!emailValid || !email) {
+    if (!emailValid) {
+      logEvent('reset_password_validation_failed', {
+        email_valid: emailValid
+      });
       return;
     }
 
     try {
-      setIsLoading(true);
+    setIsLoading(true);
       await auth().sendPasswordResetEmail(email);
       showToast('success', t('reset_password'), t('reset_password_email_sent', 'Password reset email sent!'));
       setIsLoading(false);
@@ -48,6 +57,11 @@ export default function ForgotPasswordScreen({ navigation }) {
       setIsLoading(false);
       showToast('failed', t('sorry'), error.message || t('something_went_wrong'));
     }
+  };
+
+  const handleBackToLogin = () => {
+    logEvent('back_to_login_pressed');
+    navigation.navigate('Login');
   };
 
   return (
@@ -88,16 +102,16 @@ export default function ForgotPasswordScreen({ navigation }) {
         <TouchableOpacity onPress={handleResetPassword} style={styles.button}>
           <View style={styles.gradientButton}>
             {
-                isLoading ? (
-                    <ActivityIndicator size={'small'} color={'white'} />
-                ) : (
-                    <Text style={styles.buttonText}>{t('reset_password')}</Text>
-                )
+              isLoading ? (
+                <ActivityIndicator size={'small'} color={'white'} />
+              ) : (
+                <Text style={styles.buttonText}>{t('reset_password')}</Text>
+              )
             }
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={handleBackToLogin}>
           <Text style={styles.linkText}>{t('back_to_login')}</Text>
         </TouchableOpacity>
       </KeyboardAwareScrollView>

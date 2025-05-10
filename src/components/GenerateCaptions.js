@@ -16,6 +16,7 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
 import { useTranslation } from 'react-i18next';
 import i18n from '../i18n';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 import { theme } from '../theme';
 import { styles } from '../styles/home';
@@ -33,6 +34,11 @@ const GenerateCaptionScreen = ({ navigation }) => {
   const [selectedStyle, setSelectedStyle] = useState('Funny');
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    // Log screen view when component mounts
+    logScreenView('GenerateCaptionsScreen');
+  }, []);
 
   const requestGalleryPermission = async () => {
     if (Platform.OS !== 'android') return true; // iOS skips
@@ -73,27 +79,38 @@ const GenerateCaptionScreen = ({ navigation }) => {
       }
       const result = await launchImageLibrary({
         mediaType: 'photo',
-        includeBase64: true, // ✅
+        includeBase64: true,
       });
 
       if (!result.didCancel && result.assets && result.assets.length > 0) {
         setImage(result.assets[0]);
-        setImageBase64(result.assets[0].base64); // ✅
+        setImageBase64(result.assets[0].base64);
+        logEvent('image_selected', {
+          user_id: user?.id,
+          username: user?.username,
+          image_size: result.assets[0].fileSize
+        });
       }
     } catch (error) {
       console.log('error', error);
-
     }
   };
 
   const handleGenerate = async () => {
-    
     try {
       if(isNaN(user?.token) || user?.token == 0 || user?.token < 0){
         showToast('error', i18n.t('token_zero'), i18n.t('token_zero_desc'));
         return;
       }
       if (!imageBase64) return showToast('error', i18n.t('upload_error'), i18n.t('upload_error_desc'));
+      
+      logEvent('caption_generation_started', {
+        user_id: user?.id,
+        username: user?.username,
+        style: selectedStyle,
+        has_description: !!description
+      });
+
       const userDoc = await firestore().collection('users').doc(user?.id).get();
       const userData = userDoc.data();
       firestore().collection('users').doc(user?.id).set(
@@ -106,22 +123,35 @@ const GenerateCaptionScreen = ({ navigation }) => {
 
     } catch (error) {
       console.log('error', error);
-
+      logEvent('caption_generation_error', {
+        user_id: user?.id,
+        username: user?.username,
+        error: error.message
+      });
     }
   };
 
+  const handleStyleSelect = (style) => {
+    setSelectedStyle(style);
+    logEvent('style_selected', {
+      user_id: user?.id,
+      username: user?.username,
+      style: style
+    });
+  };
+
   const styleOptions = [
-    t('funny', 'Funny'),
-    t('romantic', 'Romantic'),
-    t('love', 'Love'),
-    t('selfie', 'Selfie'),
-    t('foodie', 'Foodie'),
-    t('attitude', 'Attitude'),
-    t('trendy', 'Trendy'),
-    t('travel', 'Travel'),
-    t('festival', 'Festival'),
-    t('motivational', 'Motivational'),
-    t('friendship', 'Friendship'),
+    t('funny'),
+    t('romantic'),
+    t('love'),
+    t('selfie'),
+    t('foodie'),
+    t('attitude'),
+    t('trendy'),
+    t('travel'),
+    t('festival'),
+    t('motivational'),
+    t('friendship'),
   ];
   return (
     <View style={styles.container}>
@@ -197,7 +227,7 @@ const GenerateCaptionScreen = ({ navigation }) => {
                   styles.styleButton,
                   selectedStyle === style && styles.activeStyleButton,
                 ]}
-                onPress={() => setSelectedStyle(style)}
+                onPress={() => handleStyleSelect(style)}
               >
                 <Text
                   style={[

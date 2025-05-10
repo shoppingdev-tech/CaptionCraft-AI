@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { LANGUAGES } from '../components/utils';
 
 const GEMINI_API_KEY = 'AIzaSyAMFawnVGYJ8872DXSq_8hMwc1myVCW0ho'; // Add your API key here
 
@@ -9,7 +10,7 @@ export const generateImageCaptions = createAsyncThunk(
     const language = getState().auth.language || 'en'; // fallback to English
 
     const prompt = `
-    Please write all captions and hashtags in ${language}.
+    Please write all captions and hashtags in ${LANGUAGES[language]}.
     Generate 5 professionally written social media captions based on this Description, Style, and image.
     
     Description: "${description}"

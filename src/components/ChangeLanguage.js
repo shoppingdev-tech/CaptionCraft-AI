@@ -1,11 +1,16 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, StatusBar, ScrollView } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLanguage } from '../redux/slices/authSlice';
 import i18n from '../i18n';
 import { useTranslation } from 'react-i18next';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { theme } from '../theme';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
+import LinearGradient from 'react-native-linear-gradient';
+import { styles as homeStyle } from '../styles/home';
+import Icon from 'react-native-vector-icons/Ionicons';
+import { showToast } from './utils';
 
 const LANGUAGES = [
   { code: 'en', label: 'English', icon: 'flag', iconColor: '#2d6cdf' },
@@ -19,38 +24,82 @@ const ChangeLanguageScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedLanguage = useSelector((state) => {
-  console.log('selectedLanguage', state.auth);
-
-    return state.auth.language
+    console.log('selectedLanguage', state.auth);
+    return state.auth.language;
   });
+
+  useEffect(() => {
+    // Log screen view when component mounts
+    logScreenView('ChangeLanguageScreen');
+  }, []);
+
   const handleChangeLanguage = (code) => {
+    logEvent('language_changed', {
+      from_language: selectedLanguage,
+      to_language: code
+    });
     i18n.changeLanguage(code);
     dispatch(setLanguage(code));
-    navigation.goBack();
+    showToast('success', t('language_changed'), t('language_changed_success'));
   };
 
+  const handleLogin = () => {
+    logEvent('change_language_go_back_pressed');
+    navigation.goBack();
+};
+
   return (
-    <View style={styles.container}>
+    <View style={homeStyle.container}>
       <StatusBar translucent backgroundColor={'transparent'} />
-      <Text style={[styles.header, theme.fonts.h2Style, { color: theme.colors.primary }]}>{t('change_language')}</Text>
-      {LANGUAGES.map((lang) => (
-        <TouchableOpacity
-          key={lang.code}
-          style={[
-            styles.langButton,
-            selectedLanguage === lang.code && styles.selectedLangButton,
-          ]}
-          onPress={() => handleChangeLanguage(lang.code)}
+      <View style={{ backgroundColor: '#F3F4F6' }}>
+        <LinearGradient
+          colors={['#6366F1', '#D946EF']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={{
+            paddingHorizontal: 20,
+            paddingTop: 40,
+            paddingBottom: 10
+          }}
         >
-          <View style={styles.langRow}>
-            <Icon name={lang.icon} size={24} color={lang.iconColor} style={styles.flagIcon} />
-            <Text style={[styles.langText, theme.fonts.h4Style]}>{lang.label}</Text>
-          </View>
-          {selectedLanguage === lang.code && (
-            <Icon name="check" size={22} color={theme.colors.primary} />
-          )}
-        </TouchableOpacity>
-      ))}
+          <TouchableOpacity style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+          }} onPress={handleLogin}>
+            <View>
+              <Icon name="arrow-back-sharp" size={24} color={theme.colors.white} />
+            </View>
+            <Text style={{
+              color: theme.colors.white,
+              fontFamily: 'Poppins-SemiBold',
+              fontSize: 20,
+              marginLeft: 20
+            }}>
+              {t('change_language')}
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </View>
+      <ScrollView style={styles.container}>
+        {LANGUAGES.map((lang) => (
+          <TouchableOpacity
+            key={lang.code}
+            style={[
+              styles.langButton,
+              selectedLanguage === lang.code && styles.selectedLangButton,
+            ]}
+            onPress={() => handleChangeLanguage(lang.code)}
+          >
+            <View style={styles.langRow}>
+              <MaterialCommunityIcons name={lang.icon} size={24} color={lang.iconColor} style={styles.flagIcon} />
+              <Text style={[styles.langText, theme.fonts.h4Style]}>{lang.label}</Text>
+            </View>
+            {selectedLanguage === lang.code && (
+              <MaterialCommunityIcons name="check" size={22} color={theme.colors.primary} />
+            )}
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -60,7 +109,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: theme.colors.white,
     padding: 24,
-    justifyContent: 'center',
   },
   header: {
     marginBottom: 32,

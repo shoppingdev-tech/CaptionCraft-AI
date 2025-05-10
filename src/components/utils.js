@@ -28,3 +28,11 @@ export const handleShareLink = async (message) => {
     showToast('error', i18n.t('sorry'), i18n.t('something_went_wrong'));
   }
 };
+
+export const LANGUAGES = {
+  en: 'English',
+  de: 'Deutsch',
+  fr: 'Français',
+  es: 'Español',
+  it: 'Italiano',
+};

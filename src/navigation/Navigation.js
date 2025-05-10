@@ -10,7 +10,7 @@ import FavStackNavigator from './FavNavigation';
 
 const Tab = createBottomTabNavigator();
 
-const HIDDEN_ROUTES = ['GenerateCaptions', 'Settings', 'ResultScreen', 'CaptionDetails'];
+const HIDDEN_ROUTES = ['GenerateCaptions', 'Settings', 'ResultScreen', 'CaptionDetails', 'ChangeLanguage'];
 
 const shouldHideTabBar = (route) => {
   const routeName = getFocusedRouteNameFromRoute(route) ?? '';

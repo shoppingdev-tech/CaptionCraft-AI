@@ -14,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Image from 'react-native-fast-image';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 import { theme } from '../theme';
 import { Picker } from '@react-native-picker/picker';
@@ -33,6 +34,8 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     requestGalleryPermission();
+    // Log screen view when component mounts
+    logScreenView('HomeScreen');
   }, [])
 
   const requestGalleryPermission = async () => {
@@ -64,6 +67,22 @@ const HomeScreen = ({ navigation }) => {
     }
   };
 
+  const handleGeneratePress = () => {
+    logEvent('generate_captions_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    navigation.navigate('GenerateCaptions');
+  };
+
+  const handleSettingsPress = () => {
+    logEvent('settings_pressed', {
+      user_id: user?.id,
+      username: user?.username
+    });
+    navigation.navigate('Settings');
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar translucent backgroundColor={'transparent'} />
@@ -78,7 +97,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.title}>{t('welcome_back')}</Text>
             <Text style={styles.title}>{user?.username}</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+          <TouchableOpacity onPress={handleSettingsPress}>
             <Icon name='settings' color={theme.colors.white} size={30} />
           </TouchableOpacity>
         </LinearGradient>
@@ -110,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
           end={{ x: 1, y: 0 }}
           style={styles.gradientButtonRow}
         >
-          <TouchableOpacity onPress={() => navigation.navigate('GenerateCaptions')} style={styles.buttonTouchable}>
+          <TouchableOpacity onPress={handleGeneratePress} style={styles.buttonTouchable}>
             <Text style={styles.buttonText}>{t('generate')}</Text>
           </TouchableOpacity>
         </LinearGradient>

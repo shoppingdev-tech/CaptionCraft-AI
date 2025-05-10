@@ -80,5 +80,20 @@
   "try_again_later": "Réessayez dans quelques secondes.",
   "ok": "OK",
   "reset_password_email_sent": "E-mail de réinitialisation du mot de passe envoyé !",
-  "caption_details": "Détails de la légende"
+  "caption_details": "Détails de la légende",
+  "language_changed": "Langue modifiée",
+  "language_changed_success": "Votre langue a été mise à jour avec succès !",
+  "privacy_policy": "Politique de Confidentialité",
+  "funny": "Drôle",
+  "romantic": "Romantique",
+  "love": "Amour",
+  "selfie": "Selfie",
+  "foodie": "Gastronomie",
+  "attitude": "Attitude",
+  "trendy": "Tendance",
+  "travel": "Voyage",
+  "festival": "Festival",
+  "motivational": "Motivationnel",
+  "friendship": "Amitié",
+  "your_captions": "Vos Légendes !"
 } 

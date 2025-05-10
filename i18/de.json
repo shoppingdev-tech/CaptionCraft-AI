@@ -80,5 +80,20 @@
   "try_again_later": "Versuchen Sie es in ein paar Sekunden erneut.",
   "ok": "OK",
   "reset_password_email_sent": "Passwort-Reset-E-Mail gesendet!",
-  "caption_details": "Bildunterschrift Details"
+  "caption_details": "Bildunterschrift Details",
+  "language_changed": "Sprache geändert",
+  "language_changed_success": "Ihre Sprache wurde erfolgreich aktualisiert!",
+  "privacy_policy": "Datenschutzrichtlinie",
+  "funny": "Lustig",
+  "romantic": "Romantisch",
+  "love": "Liebe",
+  "selfie": "Selfie",
+  "foodie": "Foodie",
+  "attitude": "Attitude",
+  "trendy": "Trendig",
+  "travel": "Reisen",
+  "festival": "Festival",
+  "motivational": "Motivierend",
+  "friendship": "Freundschaft",
+  "your_captions": "Deine Bildunterschriften!"
 } 

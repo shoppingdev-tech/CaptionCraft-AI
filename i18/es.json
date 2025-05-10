@@ -16,5 +16,20 @@
   "try_again_later": "Inténtalo de nuevo en unos segundos.",
   "ok": "OK",
   "reset_password_email_sent": "¡Correo de restablecimiento de contraseña enviado!",
-  "caption_details": "Detalles del subtítulo"
+  "caption_details": "Detalles del subtítulo",
+  "language_changed": "Idioma cambiado",
+  "language_changed_success": "¡Tu idioma ha sido actualizado con éxito!",
+  "privacy_policy": "Política de Privacidad",
+  "funny": "Divertido",
+  "romantic": "Romántico",
+  "love": "Amor",
+  "selfie": "Selfie",
+  "foodie": "Gastronomía",
+  "attitude": "Actitud",
+  "trendy": "Tendencia",
+  "travel": "Viajes",
+  "festival": "Festival",
+  "motivational": "Motivacional",
+  "friendship": "Amistad",
+  "your_captions": "¡Tus Subtítulos!"
 } 

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useTranslation } from 'react-i18next';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 import { theme } from '../theme';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,8 +22,14 @@ export default function SignupScreen({ navigation }) {
     const [touched, setTouched] = useState({ username: false, email: false, password: false });
     const [showPassword, setShowPassword] = useState(false);
     const { status } = useSelector((state) => state.auth);
+
+    useEffect(() => {
+        // Log screen view when component mounts
+        logScreenView('SignupScreen');
+    }, []);
+
     const validateUsername = () => {
-        setUsernameValid(username.length > 0);
+        setUsernameValid(username.length >= 3);
     };
 
     const validateEmail = () => {
@@ -55,18 +62,37 @@ export default function SignupScreen({ navigation }) {
         validatePassword();
         if (isDisposableEmail(email)) {
             setEmailValid(false);
+            logEvent('signup_disposable_email_attempt', {
+                email: email
+            });
             return;
         }
         setTouched({ username: true, email: true, password: true });
 
         if (!usernameValid || !emailValid || !passwordValid) {
+            logEvent('signup_validation_failed', {
+                username_valid: usernameValid,
+                email_valid: emailValid,
+                password_valid: passwordValid
+            });
             return;
         }
+
+        logEvent('signup_attempt', {
+            email: email,
+            username: username
+        });
+
         await dispatch(signupUser({
             email,
             password,
             username,
         }));
+    };
+
+    const handleLogin = () => {
+        logEvent('login_from_signup_pressed');
+        navigation.navigate('Login');
     };
 
     return (
@@ -168,7 +194,7 @@ export default function SignupScreen({ navigation }) {
                 </TouchableOpacity>
                 <View style={styles.footerTextWrap}>
                     <Text style={styles.footerText}>{t('already_have_account')} </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+                    <TouchableOpacity onPress={handleLogin}>
                         <Text style={styles.linkText}>{t('login')}</Text>
                     </TouchableOpacity>
                 </View>

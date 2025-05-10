@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, StatusBar, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import { useTranslation } from 'react-i18next';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
 
 import { theme } from '../theme';
 import { styles } from '../styles/login';
@@ -21,6 +22,11 @@ export default function LoginScreen({ navigation }) {
     const [showPassword, setShowPassword] = useState(false);
     const { status } = useSelector((state) => state.auth);
 
+    useEffect(() => {
+        // Log screen view when component mounts
+        logScreenView('LoginScreen');
+    }, []);
+
     const validateEmail = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         setEmailValid(emailRegex.test(email));
@@ -36,10 +42,26 @@ export default function LoginScreen({ navigation }) {
         setTouched({ email: true, password: true });
 
         if (!emailValid || !passwordValid) {
+            logEvent('login_validation_failed', {
+                email_valid: emailValid,
+                password_valid: passwordValid
+            });
             return;
         }
+        logEvent('login_attempt', {
+            email: email
+        });
         dispatch(loginUser({ email, password }));
-        // Perform login logic here
+    };
+
+    const handleForgotPassword = () => {
+        logEvent('forgot_password_pressed');
+        navigation.navigate('Forgot');
+    };
+
+    const handleSignup = () => {
+        logEvent('signup_pressed');
+        navigation.navigate('Signup');
     };
 
     return (
@@ -113,16 +135,16 @@ export default function LoginScreen({ navigation }) {
                     <Text style={styles.errorText}>{t('password_required')}</Text>
                 )}
 
-                <TouchableOpacity onPress={() => navigation.navigate('Forgot')}>
+                <TouchableOpacity onPress={handleForgotPassword}>
                     <Text style={styles.forgotText}>{t('forgot_password')}</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={handleLogin} style={styles.button}>
                     <View style={styles.gradientButton}>
                         {status == 'loading' ? (
-                            <ActivityIndicator size="small" color="#FFFFFF" /> // 👈 Loader here
+                            <ActivityIndicator size="small" color="#FFFFFF" />
                         ) : (
-                            <Text style={styles.buttonText}>{t('login')}</Text> // 👈 Normal text
+                            <Text style={styles.buttonText}>{t('login')}</Text>
                         )}
                     </View>
                 </TouchableOpacity>
@@ -134,7 +156,7 @@ export default function LoginScreen({ navigation }) {
 
                 <View style={styles.footerTextWrap}>
                     <Text style={styles.footerText}>{t('dont_have_account')} </Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                    <TouchableOpacity onPress={handleSignup}>
                         <Text style={styles.linkText}>{t('sign_up')}</Text>
                     </TouchableOpacity>
                 </View>

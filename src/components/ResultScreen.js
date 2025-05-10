@@ -19,17 +19,34 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { theme } from '../theme';
 import RectangleSkeleton from './skeleton/result';
 import { useDisableBackHandler } from '../backHandlerUtils';
+import { logScreenView, logEvent } from '../firebaseAnalytics';
+import { useTranslation } from 'react-i18next';
 
 const ResultScreen = ({ route, navigation }) => {
   useDisableBackHandler();
     const dispatch = useDispatch();
     const { user } = useSelector((state) => state.auth);
     console.log('user', user?.id);
+    const { t } = useTranslation();
     useEffect(() => {
         dispatch(fetchCurrentDetails({uid: user?.id}));
+        // Log screen view when component mounts
+        logScreenView('ResultScreen');
     }, [loading])
     const image = route?.params?.image;
     const { captions, loading } = useSelector((state) => state.captions);
+
+    const handleBackPress = () => {
+        logEvent('result_screen_back_pressed', {
+            user_id: user?.id,
+            username: user?.username
+        });
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+        });
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar translucent backgroundColor={'transparent'} />
@@ -46,10 +63,7 @@ const ResultScreen = ({ route, navigation }) => {
                         paddingBottom: 10
                     }}
                 >
-                    <TouchableOpacity onPress={() => navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Home' }], // Name of the screen you want to go after reset
-                    })} style={{
+                    <TouchableOpacity onPress={handleBackPress} style={{
                         flexDirection: 'row',
                         alignItems: 'center',
                     }}>
@@ -62,7 +76,7 @@ const ResultScreen = ({ route, navigation }) => {
                             fontSize: 20,
                             marginLeft: 20
                         }}>
-                            Your Captions!
+                            {t('your_captions')}
                         </Text>
                     </TouchableOpacity>
                 </LinearGradient>

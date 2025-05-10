@@ -3,6 +3,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import { showToast } from '../../components/utils';
+import { setUserId, setUserProperty } from '../../firebaseAnalytics';
 
 export const signupUser = createAsyncThunk(
     'auth/signupUser',
@@ -26,6 +27,12 @@ export const signupUser = createAsyncThunk(
             };
 
             await firestore().collection('users').doc(uid).set(userData);
+            
+            // Set analytics user ID and properties
+            await setUserId(uid);
+            await setUserProperty('user_plan', 'FREE');
+            await setUserProperty('is_verified', 'false');
+            
             showToast('success', 'Registration Success', 'Your account has been created.');
             return userData;
         } catch (error) {
@@ -45,6 +52,11 @@ export const loginUser = createAsyncThunk(
 
             const userDoc = await firestore().collection('users').doc(uid).get();
             const userData = userDoc.data();
+
+            // Set analytics user ID and properties
+            await setUserId(uid);
+            await setUserProperty('user_plan', userData?.plan || 'FREE');
+            await setUserProperty('is_verified', userData?.isVerified ? 'true' : 'false');
 
             showToast('success', 'Login Successful', 'Welcome back!');
 

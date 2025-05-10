@@ -80,5 +80,20 @@
   "try_again_later": "Riprova tra qualche secondo.",
   "ok": "OK",
   "reset_password_email_sent": "Email per il reset della password inviata!",
-  "caption_details": "Dettagli didascalia"
+  "caption_details": "Dettagli didascalia",
+  "language_changed": "Lingua cambiata",
+  "language_changed_success": "La tua lingua è stata aggiornata con successo!",
+  "privacy_policy": "Informativa sulla Privacy",
+  "funny": "Divertente",
+  "romantic": "Romantico",
+  "love": "Amore",
+  "selfie": "Selfie",
+  "foodie": "Foodie",
+  "attitude": "Attitudine",
+  "trendy": "Trendy",
+  "travel": "Viaggi",
+  "festival": "Festival",
+  "motivational": "Motivazionale",
+  "friendship": "Amicizia",
+  "your_captions": "Le Tue Didascalie!"
 } 
