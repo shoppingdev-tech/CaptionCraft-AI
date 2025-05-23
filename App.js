@@ -11,19 +11,17 @@ import './src/i18n';
 import { logErrorToFirestore } from './src/redux/errorApi';
 
 const App = () => {
-  useEffect(async() => {
+  useEffect(() => {
     BootSplash.hide({ fade: true });
     try {
         mobileAds()
           .initialize()
           .then(adapterStatuses => {
-            showAppOpenAd();
+              showAppOpenAd();
           });
 
     } catch (error) {
-      await logErrorToFirestore('AdMob initialization error', JSON.stringify(error));
-
-      console.log('AdMob initialization error:', error);
+      logErrorToFirestore('AdMob initialization error', JSON.stringify(error));
     }
   }, []);
 
