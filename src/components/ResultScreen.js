@@ -26,33 +26,38 @@ import {
     RewardedAd,
     RewardedAdEventType,
 } from 'react-native-google-mobile-ads';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 
 const ResultScreen = ({ route, navigation }) => {
     useDisableBackHandler();
     const [isAdsLoaded, setIsAdsLoaded] = useState(true);
 
-    useEffect(() => {
-        const rewarded = RewardedAd.createForAdRequest(InterstitialAdUnitId, {
-            requestNonPersonalizedAdsOnly: true,
-        });
-
-        const unsubscribeLoaded = rewarded.addAdEventListener(
-            RewardedAdEventType.LOADED,
-            () => {
-                rewarded.show();
-            }
-        );
-
-        const unsubscribeEarned = rewarded.addAdEventListener(
-            RewardedAdEventType.EARNED_REWARD,
-            (reward) => {
-                console.log('🎉 User earned reward: ', reward);
-                // Grant the user access to the result here
-            }
-        );
-
-        rewarded.load(); // Automatically load and trigger show on load
+    useEffect(async() => {
+        try {
+            const rewarded = RewardedAd.createForAdRequest(InterstitialAdUnitId, {
+                requestNonPersonalizedAdsOnly: true,
+            });
+    
+            const unsubscribeLoaded = rewarded.addAdEventListener(
+                RewardedAdEventType.LOADED,
+                () => {
+                    rewarded.show();
+                }
+            );
+    
+            const unsubscribeEarned = rewarded.addAdEventListener(
+                RewardedAdEventType.EARNED_REWARD,
+                (reward) => {
+                    console.log('🎉 User earned reward: ', reward);
+                    // Grant the user access to the result here
+                }
+            );
+    
+            rewarded.load(); // Automatically load and trigger show on load
+        } catch (error) {
+            await logErrorToFirestore('ResultScreen Rewarded Ad Failed to Load', JSON.stringify(error));
+        }
 
         return () => {
             unsubscribeLoaded();

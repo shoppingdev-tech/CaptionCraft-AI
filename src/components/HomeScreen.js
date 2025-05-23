@@ -21,6 +21,7 @@ import {
 import { theme } from '../theme';
 import { useTranslation } from 'react-i18next';
 import { HomeBanner } from '../../adsConfig';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 const HomeScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -104,7 +105,8 @@ const HomeScreen = ({ navigation }) => {
               onAdLoaded={() => {
                 setIsAdsLoaded(true);
               }}
-              onAdFailedToLoad={(error) => {
+              onAdFailedToLoad={async(error) => {
+                await logErrorToFirestore('HomeScreen Banner Ad Failed to Load', JSON.stringify(error));
                 setIsAdsLoaded(false);
               }}
             />

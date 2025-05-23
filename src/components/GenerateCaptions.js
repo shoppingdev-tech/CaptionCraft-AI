@@ -28,6 +28,7 @@ import { useDispatch } from 'react-redux';
 import { showToast } from './utils';
 import { useDisableBackHandler } from '../backHandlerUtils';
 import { GenerateScreenBanner } from '../../adsConfig';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 const GenerateCaptionScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -177,8 +178,8 @@ const GenerateCaptionScreen = ({ navigation }) => {
               onAdLoaded={() => {
                 setIsAdsLoaded(true);
               }}
-              onAdFailedToLoad={(error) => {
-                console.log('error', error);
+              onAdFailedToLoad={async(error) => {
+                await logErrorToFirestore('GenerateCaptionsScreen Banner Ad Failed to Load', JSON.stringify(error));
                 setIsAdsLoaded(false);
               }}
             />

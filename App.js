@@ -8,9 +8,10 @@ import Main from './src';
 import mobileAds from 'react-native-google-mobile-ads';
 import { showAppOpenAd } from './src/AppOpenAdManager';
 import './src/i18n';
+import { logErrorToFirestore } from './src/redux/errorApi';
 
 const App = () => {
-  useEffect(() => {
+  useEffect(async() => {
     BootSplash.hide({ fade: true });
     try {
         mobileAds()
@@ -20,6 +21,8 @@ const App = () => {
           });
 
     } catch (error) {
+      await logErrorToFirestore('AdMob initialization error', JSON.stringify(error));
+
       console.log('AdMob initialization error:', error);
     }
   }, []);

@@ -15,6 +15,7 @@ import { styles } from '../styles/favourite';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { FavouriteScreenBanner } from '../../adsConfig';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 const FavouritesScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -66,7 +67,8 @@ const FavouritesScreen = ({ navigation }) => {
               onAdLoaded={() => {
                 setIsAdsLoaded(true);
               }}
-              onAdFailedToLoad={(error) => {
+              onAdFailedToLoad={async(error) => {
+                await logErrorToFirestore('FavouritesScreen Banner Ad Failed to Load', JSON.stringify(error));
                 setIsAdsLoaded(false);
               }}
             />

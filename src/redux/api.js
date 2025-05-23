@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { LANGUAGES } from '../components/utils';
+import { logErrorToFirestore } from './errorApi';
 
 const GEMINI_API_KEY = 'AIzaSyAMFawnVGYJ8872DXSq_8hMwc1myVCW0ho'; // Add your API key here
 
@@ -66,8 +67,7 @@ export const generateImageCaptions = createAsyncThunk(
       const text = response.data.candidates[0].content.parts[0].text;
       return text;
     } catch (err) {
-      console.log('response.err', err);
-
+      await logErrorToFirestore('Generate Image Captions Error', JSON.stringify(err));
       return rejectWithValue(err.response?.data || err.message);
     }
   }

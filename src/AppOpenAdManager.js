@@ -15,7 +15,6 @@ export const showAppOpenAd = () => {
   });
 
   const adErrorListener = appOpenAd.addAdEventListener(AdEventType.ERROR, (error) => {
-    console.log('App Open Ad Error:', error);
   });
 
   // Optional: Remove listeners if you need to clean up

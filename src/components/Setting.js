@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useDisableBackHandler } from '../backHandlerUtils';
 import LogoutModal from './logout';
 import { SettingScreenBanner } from '../../adsConfig';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 const SettingsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -103,7 +104,8 @@ const SettingsScreen = ({ navigation }) => {
               onAdLoaded={() => {
                 setIsAdsLoaded(true);
               }}
-              onAdFailedToLoad={(error) => {
+              onAdFailedToLoad={async(error) => {
+                await logErrorToFirestore('SettingScreen Banner Ad Failed to Load', JSON.stringify(error));
                 setIsAdsLoaded(false);
               }}
             />

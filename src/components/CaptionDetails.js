@@ -17,6 +17,7 @@ import { useDisableBackHandler } from '../backHandlerUtils';
 import { copyToClipboard, handleShareLink, showToast } from './utils';
 import i18n from '../i18n';
 import { DetailsScreenBanner } from '../../adsConfig';
+import { logErrorToFirestore } from '../redux/errorApi';
 
 const CaptionDetailsScreen = ({ route, navigation }) => {
   useDisableBackHandler();
@@ -66,7 +67,8 @@ const CaptionDetailsScreen = ({ route, navigation }) => {
               onAdLoaded={() => {
                 setIsAdsLoaded(true);
               }}
-              onAdFailedToLoad={(error) => {
+              onAdFailedToLoad={async(error) => {
+                await logErrorToFirestore('CaptionDetailsScreen Banner Ad Failed to Load', JSON.stringify(error));
                 setIsAdsLoaded(false);
               }}
             />
